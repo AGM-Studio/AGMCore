@@ -18,7 +18,7 @@ public class Configuration extends YamlConfiguration {
         this.configFile = new File(plugin.getDataFolder(), path);
 
         if (saveDefault && !configFile.exists()) plugin.saveResource(path, false);
-        loadConfig();
+        if (configFile.exists()) loadConfig();
     }
     public Configuration(JavaPlugin plugin, String configFile) {
         this(plugin, configFile, true);
