@@ -41,10 +41,10 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase(name)) {
-            if (playerOnly && playerOnlyCondition(sender, command, label, args) && sender instanceof Player)
-                run(sender, command, label, args);
-            else
-                Messenger.send(sender, "§cError:§r This command can be executed by a player");
+            if (playerOnly && playerOnlyCondition(sender, command, label, args))
+                if (sender instanceof Player) run(sender, command, label, args);
+                else Messenger.send(sender, "§cError:§r This command can be executed by a player");
+            else run(sender, command, label, args);
         }
         return true;
     }
