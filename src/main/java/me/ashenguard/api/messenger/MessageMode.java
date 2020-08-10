@@ -42,7 +42,7 @@ public enum MessageMode {
 
     @NotNull
     public String getPrefix() {
-        return String.format("§7[%s]§r %s", Messenger.getPrefix(), prefix == null ? "" : prefix + " ");
+        return String.format("§7[%s]§r %s", Messenger.getPrefix(), prefix == null ? "" : color + prefix + "§r ");
     }
     @NotNull
     public String getSpace() {

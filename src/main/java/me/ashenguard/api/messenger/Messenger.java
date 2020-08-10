@@ -39,6 +39,8 @@ public class Messenger {
                 Messenger.Debug("General", "Exception folder wasn't found, A new one created");
     }
     public static void setup(JavaPlugin plugin, FileConfiguration config) {
+        Messenger.plugin = plugin;
+
         HashMap<MessageMode, Boolean> inGameMessaging = new HashMap<>();
         inGameMessaging.put(MessageMode.Info, config == null || config.getBoolean("InGameMessages.Info", true));
         inGameMessaging.put(MessageMode.Warning, config == null || config.getBoolean("InGameMessages.Warning", true));

@@ -1,4 +1,4 @@
-package me.ashenguard.api;
+package me.ashenguard.api.numeral;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

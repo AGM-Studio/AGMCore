@@ -2,6 +2,8 @@ package me.ashenguard.api.gui;
 
 import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.placeholderapi.PAPI;
@@ -21,9 +23,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class GUI implements Listener {
     private final PAPI PAPI;
@@ -54,17 +57,12 @@ public class GUI implements Listener {
         this.PAPI = PAPI;
         this.legacy = legacy;
 
-        config = new Configuration(plugin, new File(plugin.getDataFolder(), "GUI.yml"), "GUI.yml");
-        config.saveDefaultConfig();
+        config = new Configuration(plugin, "GUI.yml", true);
+        if (legacy) translateLegacy(config);
 
-        if (!legacy) translateLegacy(config);
-
-        Messenger.Debug("GUI", "§5GUI§r has been loaded");
-
-        // ---- Register Listener ---- //
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
-        Messenger.Debug("GUI", "Listener has been registered");
+        Messenger.Debug("GUI", "§5GUI§r has been loaded and its Listener has been registered");
     }
 
     // ---- GUI Inventories ---- //
@@ -130,14 +128,7 @@ public class GUI implements Listener {
      * This Method generate item using a configuration section
      *
      * @param player               target player that item will be generated for
-     * @param configurationSection this section should use the following pattern to work
-     *                             {@code
-     *                             Material.ID: <<Material ID>>
-     *                             Material.Value: <<Data for vanilla material/ value for Player_Head and Custom_Head>>
-     *                             Name: <<Item name>>
-     *                             Lore: <<Item lore>>
-     *                             Glow: <<True if item should glow>>
-     *                             }
+     * @param configurationSection AGM GUI Item Tree section
      */
     public ItemStack getItemStack(OfflinePlayer player, @NotNull ConfigurationSection configurationSection) {
         String ID = configurationSection.getString("Material.ID", "STONE");
@@ -161,8 +152,7 @@ public class GUI implements Listener {
      * @param intValue the data value; It would be used in vanilla material and legacy version
      */
     public ItemStack getItemStack(OfflinePlayer player, String ID, String value, short intValue, String name, List<String> lore) {
-        ItemStack item = getItemStack(player, ID, value, intValue);
-        return getItemStack(item, player, name, lore);
+        return getItemStack(player, ID, value, intValue, name, lore, false);
     }
     public ItemStack getItemStack(OfflinePlayer player, String ID, String value, short intValue, String name, List<String> lore, boolean glow) {
         ItemStack item = getItemStack(player, ID, value, intValue);
@@ -191,7 +181,7 @@ public class GUI implements Listener {
     public ItemStack getItemStack(@NotNull ItemStack itemStack, OfflinePlayer player, String name, List<String> lore, boolean glow) {
         ItemMeta itemMeta = getItemStack(itemStack, player, name, lore).getItemMeta();
         if (glow) {
-            itemMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+            itemMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 0, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
         itemStack.setItemMeta(itemMeta);
@@ -236,7 +226,23 @@ public class GUI implements Listener {
      */
     public ItemStack getItemHead(OfflinePlayer player, boolean custom, String value) {
         ItemStack item = XMaterial.PLAYER_HEAD.parseItem();
-        SkullMeta result = custom ? SkullUtils.applySkin(item.getItemMeta(), value) : SkullUtils.applySkin(item.getItemMeta(), value.equals("self") ? player.getName() : value);
+        SkullMeta result = (SkullMeta) item.getItemMeta();
+
+        if (custom) {
+            GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+            profile.getProperties().put("textures", new Property("textures", new String(value)));
+            try {
+                Field profileField = result.getClass().getDeclaredField("profile");
+                profileField.setAccessible(true);
+                profileField.set(result, profile);
+            }
+            catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+                Messenger.handleException(e);
+            }
+        } else {
+            result = SkullUtils.applySkin(item.getItemMeta(), value.equals("self") ? (player != null ? player.getName() : "Steve") : value);
+        }
+
         item.setItemMeta(result);
 
         return item;

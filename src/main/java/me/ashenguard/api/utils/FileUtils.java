@@ -1,7 +1,10 @@
-package me.ashenguard.api;
+package me.ashenguard.api.utils;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import me.ashenguard.api.WebReader;
+import me.ashenguard.api.messenger.Messenger;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -9,12 +12,11 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-public class FileUtil {
+public class FileUtils {
 
     public static List<Class<?>> getClasses(File folder, Class<?> type) {
         return getClasses(folder, null, type);
     }
-
     public static List<Class<?>> getClasses(File folder, String fileName, Class<?> type) {
         List<Class<?>> list = new ArrayList<>();
 
@@ -42,6 +44,39 @@ public class FileUtil {
         } catch (Throwable ignored) {}
 
         return list;
+    }
+
+    public static boolean writeFile(File file, String string) {
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write(string);
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            Messenger.handleException(e);
+        }
+        return false;
+    }
+    public static boolean writeFile(File file, WebReader webReader) {
+        return writeFile(file, webReader.read());
+    }
+    public static boolean writeFile(File file, InputStream stream) {
+        try {
+            return writeFile(file, new String(IOUtils.toByteArray(stream)));
+        } catch (IOException e) {
+            Messenger.handleException(e);
+        }
+        return false;
+    }
+
+    public static String readStream(InputStream stream) {
+        String string = "";
+        try {
+            return new String(IOUtils.toByteArray(stream));
+        } catch (IOException e) {
+            Messenger.handleException(e);
+        }
+        return string;
     }
 
     private static void gather(URL jar, List<Class<?>> list, Class<?> clazz) {
