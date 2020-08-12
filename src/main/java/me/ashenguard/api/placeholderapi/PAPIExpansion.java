@@ -6,8 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class PAPIExpansion extends PlaceholderExpansion {
-
-    private JavaPlugin plugin;
+    protected JavaPlugin plugin;
 
     public PAPIExpansion(JavaPlugin plugin){
         this.plugin = plugin;
@@ -32,7 +31,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
     @NotNull
     @Override
     public String getIdentifier(){
-        return "AGMCore";
+        return plugin.getName();
     }
 
     @NotNull
