@@ -23,10 +23,10 @@ public class Messenger {
     public final JavaPlugin plugin;
     public final File exceptionFolder;
 
-    public final boolean debugger;
-    public final HashMap<MessageMode, Boolean> inGameMessaging;
-    public final HashMap<String, Boolean> debugs;
-    public final String prefix;
+    public boolean debugger;
+    public HashMap<MessageMode, Boolean> inGameMessaging;
+    public HashMap<String, Boolean> debugs;
+    public String prefix;
 
     public Messenger(JavaPlugin plugin, HashMap<MessageMode, Boolean> inGameMessaging, boolean debugger, HashMap<String, Boolean> debugs, String prefix) {
         MessengerAPIMap.put(plugin, this);
