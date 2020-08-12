@@ -28,7 +28,7 @@ public class Configuration extends YamlConfiguration {
         try {
             load(this.configFile);
         } catch (IOException | InvalidConfigurationException exception) {
-            Messenger.handleException(exception);
+            Messenger.getInstance(plugin).handleException(exception);
         }
     }
 
@@ -40,7 +40,7 @@ public class Configuration extends YamlConfiguration {
         try {
             save(this.configFile);
         } catch (Exception exception) {
-            Messenger.handleException(exception);
+            Messenger.getInstance(plugin).handleException(exception);
         }
     }
 

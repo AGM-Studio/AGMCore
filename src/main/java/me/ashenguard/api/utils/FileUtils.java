@@ -1,7 +1,6 @@
 package me.ashenguard.api.utils;
 
 import me.ashenguard.api.WebReader;
-import me.ashenguard.api.messenger.Messenger;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -52,9 +51,7 @@ public class FileUtils {
             writer.write(string);
             writer.close();
             return true;
-        } catch (IOException e) {
-            Messenger.handleException(e);
-        }
+        } catch (IOException ignored) {}
         return false;
     }
     public static boolean writeFile(File file, WebReader webReader) {
@@ -63,9 +60,7 @@ public class FileUtils {
     public static boolean writeFile(File file, InputStream stream) {
         try {
             return writeFile(file, new String(IOUtils.toByteArray(stream)));
-        } catch (IOException e) {
-            Messenger.handleException(e);
-        }
+        } catch (IOException ignored) {}
         return false;
     }
 
@@ -73,9 +68,7 @@ public class FileUtils {
         String string = "";
         try {
             return new String(IOUtils.toByteArray(stream));
-        } catch (IOException e) {
-            Messenger.handleException(e);
-        }
+        } catch (IOException ignored) {}
         return string;
     }
 

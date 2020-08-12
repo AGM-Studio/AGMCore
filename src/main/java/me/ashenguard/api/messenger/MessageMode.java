@@ -2,6 +2,7 @@ package me.ashenguard.api.messenger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -20,37 +21,37 @@ public enum MessageMode {
 
     MessageMode(ChatColor color) {
         this.color = color;
-        this.permission = Messenger.plugin.getDescription().getName() + ".Messages." + name();
+        this.permission = "Messages." + name();
         this.prefix = name();
     }
     MessageMode(ChatColor color, String permission) {
         this.color = color;
         if (permission == null) this.permission = null;
-        else this.permission = Messenger.plugin.getDescription().getName() + ".Messages." + permission;
+        else this.permission = "Messages." + permission;
         this.prefix = name();
     }
     MessageMode(ChatColor color, String permission, String prefix) {
         this.color = color;
         if (permission == null) this.permission = null;
-        else this.permission = Messenger.plugin.getDescription().getName() + ".Messages." + permission;
+        else this.permission = "Messages." + permission;
         this.prefix = prefix;
     }
 
-    public boolean hasPermission(Permissible permissible) {
-        return permission == null || (permission.equals("*") ? permissible.isOp() : permissible.hasPermission(permission));
+    public boolean hasPermission(JavaPlugin plugin, Permissible permissible) {
+        return permission == null || (permission.equals("*") ? permissible.isOp() : permissible.hasPermission(plugin.getName() + "." + permission));
     }
 
     @NotNull
-    public String getPrefix() {
-        return String.format("§7[%s]§r %s", Messenger.getPrefix(), prefix == null ? "" : color + prefix + "§r ");
+    public String getPrefix(JavaPlugin plugin) {
+        return String.format("§7[%s]§r %s", Messenger.getInstance(plugin).prefix, prefix == null ? "" : color + prefix + "§r ");
     }
     @NotNull
-    public String getSpace() {
-        String prefix = ChatColor.stripColor(getPrefix());
+    public String getSpace(JavaPlugin plugin) {
+        String prefix = ChatColor.stripColor(getPrefix(plugin));
         return String.join("", Collections.nCopies(prefix.length(), " "));
     }
     @NotNull
-    public String getPrefix(boolean first) {
-        return first ? getPrefix() : getSpace();
+    public String getPrefix(JavaPlugin plugin, boolean first) {
+        return first ? getPrefix(plugin) : getSpace(plugin);
     }
 }

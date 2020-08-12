@@ -43,7 +43,7 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
         if (command.getName().equalsIgnoreCase(name)) {
             if (playerOnly && playerOnlyCondition(sender, command, label, args))
                 if (sender instanceof Player) run(sender, command, label, args);
-                else Messenger.send(sender, "§cError:§r This command can be executed by a player");
+                else Messenger.getInstance(plugin).send(sender, "§cError:§r This command can be executed by a player");
             else run(sender, command, label, args);
         }
         return true;

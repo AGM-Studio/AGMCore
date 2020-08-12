@@ -2,8 +2,6 @@ package me.ashenguard.api.gui;
 
 import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.placeholderapi.PAPI;
@@ -23,14 +21,14 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class GUI implements Listener {
+    private final JavaPlugin plugin;
     private final PAPI PAPI;
     private final boolean legacy;
+
     public Configuration config;
 
     private void translateLegacy(@NotNull ConfigurationSection section) {
@@ -54,6 +52,7 @@ public class GUI implements Listener {
     }
 
     public GUI(JavaPlugin plugin, PAPI PAPI, boolean legacy) {
+        this.plugin = plugin;
         this.PAPI = PAPI;
         this.legacy = legacy;
 
@@ -62,7 +61,7 @@ public class GUI implements Listener {
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
-        Messenger.Debug("GUI", "§5GUI§r has been loaded and its Listener has been registered");
+        Messenger.getInstance(plugin).Debug("GUI", "§5GUI§r has been loaded and its Listener has been registered");
     }
 
     // ---- GUI Inventories ---- //
@@ -109,7 +108,7 @@ public class GUI implements Listener {
         if (guiInventory == null) return;
 
         removeGUIInventory(player);
-        Messenger.Debug("GUI", "Inventory close detected", "Player= §6" + player.getName(), "Inventory= §6" + guiInventory.title);
+        Messenger.getInstance(plugin).Debug("GUI", "Inventory close detected", "Player= §6" + player.getName(), "Inventory= §6" + guiInventory.title);
     }
 
     // <editor-fold ---- Item Creators ---- //>
@@ -211,6 +210,7 @@ public class GUI implements Listener {
      */
     public ItemStack getItemStack(String ID, short data) {
         ItemStack item = XMaterial.matchXMaterial(ID).orElse(XMaterial.STONE).parseItem();
+        if (item == null) return null;
 
         if (legacy) item.setDurability(data);
 
@@ -226,23 +226,9 @@ public class GUI implements Listener {
      */
     public ItemStack getItemHead(OfflinePlayer player, boolean custom, String value) {
         ItemStack item = XMaterial.PLAYER_HEAD.parseItem();
-        SkullMeta result = (SkullMeta) item.getItemMeta();
+        if (item == null) return null;
 
-        if (custom) {
-            GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-            profile.getProperties().put("textures", new Property("textures", new String(value)));
-            try {
-                Field profileField = result.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(result, profile);
-            }
-            catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-                Messenger.handleException(e);
-            }
-        } else {
-            result = SkullUtils.applySkin(item.getItemMeta(), value.equals("self") ? (player != null ? player.getName() : "Steve") : value);
-        }
-
+        SkullMeta result = SkullUtils.applySkin(item.getItemMeta(), custom || !value.equals("self") ? value : (player != null ? player.getName() : "Steve"));
         item.setItemMeta(result);
 
         return item;
