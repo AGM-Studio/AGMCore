@@ -1,0 +1,31 @@
+name: AGMCore
+version: ${project.version}
+main: me.ashenguard.agmcore.AGMCore
+api-version: 1.13
+softdepend: [PlaceholderAPI]
+authors: [Ashenguard]
+description: Basic API for AGMPlugins
+website: https://agmdev.xyz
+
+permissions:
+  AGMCore.*:
+    description: All perms
+    default: op
+    children:
+      - AGMCore.Messages.*
+    AGMCore.Messages.*:
+      description: All messages perms
+      default: op
+      children:
+        - AGMCore.Messages.Info
+        - AGMCore.Messages.Warning
+        - AGMCore.Messages.Debug
+    AGMCore.Messages.Info:
+      description: Allows in game Info messages
+      default: op
+    AGMCore.Messages.Warning:
+      description: Allows in game Warning messages
+      default: op
+    AGMCore.Messages.Debug:
+      description: Allows in game Debug messages
+      default: op

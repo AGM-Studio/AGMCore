@@ -1,57 +1,51 @@
 package me.ashenguard.api;
 
+import me.ashenguard.api.utils.Version;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
 public class SpigotUpdater {
-    private int project;
-    private URL checkURL;
-    private String newVersion;
+    private final int RESOURCE_ID;
+    private final String URL;
+    private final String RESOURCE_URL;
+    private Version pluginVersion;
+    private Version spigotVersion;
     private JavaPlugin plugin;
 
     public SpigotUpdater(@NotNull JavaPlugin plugin, int projectID) {
         this.plugin = plugin;
-        this.newVersion = plugin.getDescription().getVersion();
-        this.project = projectID;
-        try {
-            this.checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + projectID);
-        } catch (MalformedURLException ignored) {}
+
+        this.RESOURCE_ID = projectID;
+        this.URL = "https://api.spigotmc.org/legacy/update.php?resource=" + projectID;
+        this.RESOURCE_URL = "https://www.spigotmc.org/resources/" + projectID;
+
+        this.pluginVersion = new Version(plugin.getDescription().getVersion());
+        this.spigotVersion = new Version(new WebReader(URL).read().replace(" ",""));
     }
 
     public int getProjectID() {
-        return project;
+        return RESOURCE_ID;
     }
-
     public JavaPlugin getPlugin() {
         return plugin;
     }
 
     public String getLatestVersion() {
         updateLatestVersion();
-        return newVersion;
+        Version latest = spigotVersion.isHigher(pluginVersion) ? spigotVersion : pluginVersion;
+        return latest.toString().substring(0, latest.toString().indexOf(" "));
     }
 
     public String getResourceURL() {
-        return "https://www.spigotmc.org/resources/" + project;
+        return RESOURCE_URL;
     }
 
     public boolean newUpdate() {
         updateLatestVersion();
-        return !plugin.getDescription().getVersion().equals(newVersion);
+        return spigotVersion.isHigher(pluginVersion);
     }
 
     private void updateLatestVersion() {
-        try {
-            URLConnection con = checkURL.openConnection();
-            this.newVersion = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-        } catch (IOException ignored) {
-        }
+        this.spigotVersion = new Version(new WebReader(URL).read().replace(" ",""));
     }
 }

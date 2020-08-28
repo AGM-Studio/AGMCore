@@ -1,6 +1,5 @@
 package me.ashenguard.api.utils;
 
-import me.ashenguard.api.exceptions.VersionFormatException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -10,20 +9,18 @@ public class Version implements Comparable<Version> {
     private int major = 0;
     private int minor = 0;
     private int patch = 0;
-    private VersionStatus status = VersionStatus.Release;
+    private VersionStatus status = VersionStatus.Alpha;
 
-    public Version(String version) throws VersionFormatException {
-        Pattern pattern = Pattern.compile("^\\d+[.]\\d+([.]\\d+)?((\\s+|.)?(?i)(Beta|Alpha|Release))?$");
+    public Version(String version) {
+        Pattern pattern = Pattern.compile("^\\d+[.]\\d+([.]\\d+)?((.)?(?i)(Beta|Alpha|Release))?$");
         Matcher validator = pattern.matcher(version);
 
-        if (!validator.find()) throw new VersionFormatException("Version format is not correct: " + version);
+        if (!validator.find()) return;
 
         Matcher matcher = Pattern.compile("\\d+").matcher(version);
 
         if (matcher.find()) this.major = Integer.parseInt(matcher.group());
-        else throw new VersionFormatException("Version format is not correct: " + version);
         if (matcher.find()) this.minor = Integer.parseInt(matcher.group());
-        else throw new VersionFormatException("Version format is not correct: " + version);
         if (matcher.find()) this.patch = Integer.parseInt(matcher.group());
 
         this.status = VersionStatus.get(version);
