@@ -97,7 +97,7 @@ public class Messenger {
         }
     }
     public void sendAll(MessageMode mode, String message) {
-        if (inGameMessaging.getOrDefault(mode, true) && !(mode.equals(MessageMode.Operator) || mode.equals(MessageMode.Personal))) return;
+        if (!inGameMessaging.getOrDefault(mode, true) && !(mode.equals(MessageMode.Operator) || mode.equals(MessageMode.Personal))) return;
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         for (Player player:players)
             if (mode.hasPermission(plugin, player))

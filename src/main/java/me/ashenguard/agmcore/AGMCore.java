@@ -12,7 +12,7 @@ import java.io.File;
 
 public final class AGMCore extends JavaPlugin {
     public static final int pluginID = 8250;
-    public static final int resourceID = 81800;
+    public static final int resourceID = 83245;
     public static SpigotUpdater spigotupdater;
     public static FileConfiguration config;
 
