@@ -4,7 +4,6 @@ import me.ashenguard.api.placeholderapi.PAPI;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Translator {
-    private final JavaPlugin plugin;
     private final PAPI papi;
 
     private final String notFound;
@@ -16,7 +15,6 @@ public class Translator {
     }
 
     public Translator(JavaPlugin plugin, PAPI papi, String notFound) {
-        this.plugin = plugin;
         this.papi = papi;
 
         translation = new Configuration(plugin, "Language.yml");
@@ -24,10 +22,10 @@ public class Translator {
     }
 
     public String get(String path) {
-        return translation.getString(path, notFound);
+        return papi.translate(translation.getString(path, notFound));
     }
 
     public String get(String path, String def) {
-        return translation.getString(path, def);
+        return papi.translate(translation.getString(path, def));
     }
 }
