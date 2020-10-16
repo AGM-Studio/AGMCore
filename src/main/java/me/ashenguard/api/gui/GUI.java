@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -89,9 +90,10 @@ public class GUI implements Listener {
         Player player = (Player) event.getWhoClicked();
 
         GUIInventory guiInventory = inventoryHashMap.getOrDefault(player, null);
-        if (guiInventory == null) return;
+        if (guiInventory == null || event.getClickedInventory().getType() == InventoryType.PLAYER) return;
 
         event.setCancelled(true);
+
         guiInventory.click(event);
     }
 
