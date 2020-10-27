@@ -17,7 +17,7 @@ public class Translator {
     public Translator(JavaPlugin plugin, PAPI papi, String notFound) {
         this.papi = papi;
 
-        translation = new Configuration(plugin, "Language.yml");
+        translation = new Configuration(plugin, "language.yml");
         this.notFound = notFound;
     }
 
