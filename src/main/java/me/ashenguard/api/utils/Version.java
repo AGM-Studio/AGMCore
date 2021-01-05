@@ -51,6 +51,11 @@ public class Version implements Comparable<Version> {
         return major + "." + minor + "." + patch + " " + status;
     }
 
+    public String toString(boolean ignoreStatus) {
+        if (ignoreStatus) return major + "." + minor + "." + patch;
+        return major + "." + minor + "." + patch + " " + status;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Version)) return false;
