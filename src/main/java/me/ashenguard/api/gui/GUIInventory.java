@@ -5,19 +5,29 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
+@SuppressWarnings("unused")
 public abstract class GUIInventory {
-    public String title;
-    protected Inventory inventory;
-    protected Player player;
-    protected GUI GUI;
+    public final String title;
+    protected final Inventory inventory;
+    protected final Player player;
+    protected final GUI GUI;
+    protected final boolean inventoryOnly;
+    protected final boolean cancelAlways;
 
-    protected GUIInventory(GUI GUI, String title, Player player, Inventory inventory) {
+    protected GUIInventory(GUI GUI, String title, Player player, Inventory inventory, boolean inventoryOnly, boolean cancelAlways) {
         this.GUI = GUI;
         this.title = title;
         this.player = player;
         this.inventory = inventory;
+        this.inventoryOnly = inventoryOnly;
+        this.cancelAlways = cancelAlways;
 
         GUI.saveGUIInventory(player, this);
+        GUI.plugin.messenger.Debug("GUI", "New inventory detected", "Player= §6" + player.getName(), "Inventory= §6" + title);
+    }
+
+    protected GUIInventory(GUI GUI, String title, Player player, Inventory inventory) {
+        this(GUI, title, player, inventory, false, true);
     }
 
     protected GUIInventory(GUI GUI, String title, Player player, int size) {
@@ -35,7 +45,7 @@ public abstract class GUIInventory {
 
     public void reload() {
         design();
-    };
+    }
 
     protected abstract void design();
     public abstract void click(InventoryClickEvent event);

@@ -1,26 +1,27 @@
 package me.ashenguard.api;
 
-import me.ashenguard.api.messenger.Messenger;
+import me.ashenguard.api.spigot.SpigotPlugin;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
+@SuppressWarnings("unused")
 public class Configuration extends YamlConfiguration {
-    private final JavaPlugin plugin;
+    private final SpigotPlugin plugin;
     public final File configFile;
     public final String path;
 
-    public Configuration(JavaPlugin plugin, String path, boolean saveDefault) {
+    public Configuration(SpigotPlugin plugin, String path, boolean saveDefault) {
         this.plugin = plugin;
         this.path = path;
         this.configFile = new File(plugin.getDataFolder(), path);
 
-        if (saveDefault && !configFile.exists()) plugin.saveResource(path, false);
+        if (saveDefault) saveDefaultConfig();
         if (configFile.exists()) loadConfig();
     }
-    public Configuration(JavaPlugin plugin, String configFile) {
+    public Configuration(SpigotPlugin plugin, String configFile) {
         this(plugin, configFile, true);
     }
 
@@ -28,24 +29,24 @@ public class Configuration extends YamlConfiguration {
         try {
             load(this.configFile);
         } catch (IOException | InvalidConfigurationException exception) {
-            Messenger.getInstance(plugin).handleException(exception);
+            plugin.messenger.handleException(exception);
         }
-    }
-
-    public Configuration getConfig() {
-        return this;
     }
 
     public void saveConfig() {
         try {
             save(this.configFile);
         } catch (Exception exception) {
-            Messenger.getInstance(plugin).handleException(exception);
+            plugin.messenger.handleException(exception);
         }
     }
 
+    public void saveDefaultConfig(boolean replace) {
+        if (configFile.exists() && !replace) return;
+        plugin.saveResource(path, replace);
+    }
+
     public void saveDefaultConfig() {
-        if (configFile.exists()) return;
-        plugin.saveResource(this.path, false);
+        saveDefaultConfig(false);
     }
 }

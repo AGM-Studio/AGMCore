@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({"SameReturnValue", "unused"})
 public abstract class Commands implements CommandExecutor, TabCompleter {
 
     protected final JavaPlugin plugin;

@@ -1,6 +1,5 @@
 package me.ashenguard.api.utils;
 
-import me.ashenguard.api.WebReader;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -11,8 +10,8 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+@SuppressWarnings("unused")
 public class FileUtils {
-
     public static List<Class<?>> getClasses(File folder, Class<?> type) {
         return getClasses(folder, null, type);
     }
