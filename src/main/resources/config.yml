@@ -20,11 +20,12 @@
 
 Prefix: AGMCore
 Check:
-  Updates: true
+  PluginUpdates: true
 
 Debug:
   Enable: false
   General: true
+  Extensions: true
   PlaceholderAPI: true
 
 InGameMessages:

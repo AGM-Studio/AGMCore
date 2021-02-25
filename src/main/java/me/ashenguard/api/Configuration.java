@@ -1,11 +1,14 @@
 package me.ashenguard.api;
 
 import me.ashenguard.api.spigot.SpigotPlugin;
+import me.ashenguard.api.utils.FileUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class Configuration extends YamlConfiguration {
@@ -21,6 +24,32 @@ public class Configuration extends YamlConfiguration {
         if (saveDefault) saveDefaultConfig();
         if (configFile.exists()) loadConfig();
     }
+
+    public Configuration(SpigotPlugin plugin, String path, String resource) {
+        this(plugin, path, resource, (string -> string));
+    }
+
+    public Configuration(SpigotPlugin plugin, String path, String resource, Function<String, String> defaultEditor) {
+        this(plugin, path, plugin.getResource(resource), defaultEditor);
+    }
+
+    public Configuration(SpigotPlugin plugin, String path, InputStream resource) {
+        this(plugin, path, resource, (string -> string));
+    }
+
+    public Configuration(SpigotPlugin plugin, String path, InputStream resource, Function<String, String> defaultEditor) {
+        this(plugin, path, FileUtils.readStream(resource), defaultEditor, 0);
+    }
+
+    private Configuration(SpigotPlugin plugin, String path, String data, Function<String, String> defaultEditor, int ignored) {
+        this.plugin = plugin;
+        this.path = path;
+        this.configFile = new File(plugin.getDataFolder(), path);
+
+        if (!configFile.exists()) FileUtils.writeFile(configFile, defaultEditor.apply(data));
+        if (configFile.exists()) loadConfig();
+    }
+
     public Configuration(SpigotPlugin plugin, String configFile) {
         this(plugin, configFile, true);
     }

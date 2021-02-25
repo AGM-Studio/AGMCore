@@ -21,13 +21,14 @@ public abstract class GUIInventory {
         this.inventory = inventory;
         this.inventoryOnly = inventoryOnly;
         this.cancelAlways = cancelAlways;
-
-        GUI.saveGUIInventory(player, this);
-        GUI.plugin.messenger.Debug("GUI", "New inventory detected", "Player= §6" + player.getName(), "Inventory= §6" + title);
     }
 
     protected GUIInventory(GUI GUI, String title, Player player, Inventory inventory) {
-        this(GUI, title, player, inventory, false, true);
+        this(GUI, title, player, inventory, true, true);
+    }
+
+    protected GUIInventory(GUI GUI, String title, Player player, int size, boolean inventoryOnly, boolean cancelAlways) {
+        this(GUI, title, player, Bukkit.createInventory(player, size, title), inventoryOnly, cancelAlways);
     }
 
     protected GUIInventory(GUI GUI, String title, Player player, int size) {
@@ -35,7 +36,10 @@ public abstract class GUIInventory {
     }
 
     public void show() {
+        reload();
         player.openInventory(inventory);
+        GUI.saveGUIInventory(player, this);
+        GUI.plugin.messenger.Debug("GUI", "New inventory detected", "Player= §6" + player.getName(), "Inventory= §6" + title);
     }
 
     public void close() {

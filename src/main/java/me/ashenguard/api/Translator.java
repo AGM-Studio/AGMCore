@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "ConstantConditions"})
 public class Translator {
     private final String notFound;
     private final HashMap<String, Configuration> translations = new HashMap<>();

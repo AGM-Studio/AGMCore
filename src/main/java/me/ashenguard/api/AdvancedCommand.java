@@ -7,23 +7,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"SameReturnValue", "unused"})
-public abstract class Commands implements CommandExecutor, TabCompleter {
-
+@SuppressWarnings({"SameReturnValue", "unused", "ConstantConditions"})
+public abstract class AdvancedCommand implements CommandExecutor, TabCompleter {
     protected final JavaPlugin plugin;
     protected final String name;
     protected final boolean playerOnly;
     protected final String playerOnlyMessage;
 
-    public Commands(JavaPlugin plugin, String name, boolean playerOnly) {
+    public AdvancedCommand(JavaPlugin plugin, String name, boolean playerOnly) {
         this(plugin, name, playerOnly, "§cError:§r This command can be executed by a player");
     }
 
-    public Commands(JavaPlugin plugin, String name, boolean playerOnly, String playerOnlyMessage) {
+    public AdvancedCommand(JavaPlugin plugin, String name, boolean playerOnly, String playerOnlyMessage) {
         plugin.getCommand(name).setExecutor(this);
         plugin.getCommand(name).setTabCompleter(this);
 
@@ -40,7 +40,7 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
         if (command.getName().equalsIgnoreCase(name)) {
             if (playerOnly && playerOnlyCondition(sender, command, label, args))
                 if (sender instanceof Player) run(sender, command, label, args);
@@ -51,7 +51,7 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         List<String> list = tabs(sender, command, alias, args);
         return list == null ? new ArrayList<>() : list;
     }

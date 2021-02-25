@@ -5,7 +5,7 @@ import me.ashenguard.spigotapplication.SpigotPanel;
 
 public class Panel extends SpigotPanel {
     public Panel() {
-        super(83245, new Version(1, 2));
+        super(83245, new Version(2, 0));
         this.addDependency(6245);
         this.setDescription("Installation:\n" +
                 "Add the JAR file to your server plugins folder.\n\n" +

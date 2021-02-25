@@ -9,23 +9,23 @@ website: https://agmdev.xyz
 
 permissions:
   AGMCore.*:
-    description: All perms
+    description: All permissions related to this plugin
     default: op
     children:
       - AGMCore.Messages.*
     AGMCore.Messages.*:
-      description: All messages perms
+      description: All permissions related to the messenger of this plugin
       default: op
       children:
         - AGMCore.Messages.Info
         - AGMCore.Messages.Warning
         - AGMCore.Messages.Debug
     AGMCore.Messages.Info:
-      description: Allows in game Info messages
+      description: Permission required to receive Info messages in the game.
       default: op
     AGMCore.Messages.Warning:
-      description: Allows in game Warning messages
+      description: Permission required to receive Warning messages in the game.
       default: op
     AGMCore.Messages.Debug:
-      description: Allows in game Debug messages
+      description: Permission required to receive Debug messages in the game.
       default: op
