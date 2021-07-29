@@ -1,11 +1,13 @@
 package me.ashenguard.agmcore;
 
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.ashenguard.agmcore.extension.CoreExtension;
 import me.ashenguard.agmcore.extension.ExtensionLoader;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.spigot.SpigotPlugin;
 import me.ashenguard.lib.PlaytimeManager;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.HashMap;
@@ -43,6 +45,14 @@ public final class AGMCore extends SpigotPlugin {
     public void onEnable() {
         instance = this;
 
+        Plugin protocolLib = getServer().getPluginManager().getPlugin("ProtocolLib");
+        Plugin placeholderAPI = getServer().getPluginManager().getPlugin("PlaceholderAPI");
+        if (protocolLib == null || placeholderAPI == null || !protocolLib.isEnabled() || !placeholderAPI.isEnabled()) {
+            AGMCore.getMessenger().Warning("Dependencies are not satisfied. Disabling plugin to stop further issues.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         saveDefaultConfig();
         reloadConfig();
 
@@ -55,14 +65,15 @@ public final class AGMCore extends SpigotPlugin {
         ExtensionLoader extensionLoader = new ExtensionLoader();
         extensions = extensionLoader.registerAllExtensions();
 
-        EventCaller.start();
         messenger.Info("Plugin has been enabled successfully");
+
+        MinecraftVersion.getVersion();
     }
 
     @Override
     public void onDisable() {
         for (CoreExtension extension: extensions.values()) extension.onDisable();
-        EventCaller.stop(true);
+        EventCaller.deactivateDayCycleEvent(true);
         messenger.Info("Plugin has been disabled");
     }
 }

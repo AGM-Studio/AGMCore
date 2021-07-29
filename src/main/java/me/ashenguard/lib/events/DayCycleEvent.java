@@ -1,5 +1,6 @@
 package me.ashenguard.lib.events;
 
+import me.ashenguard.agmcore.EventCaller;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -9,6 +10,10 @@ public class DayCycleEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Cycle cycle;
     private final World world;
+
+    public static void activate() {
+        EventCaller.activateDayCycleEvent();
+    }
 
     public DayCycleEvent(World world) {
         this.world = world;
@@ -57,7 +62,12 @@ public class DayCycleEvent extends Event {
             return getCycle(world.getTime());
         }
         public static Cycle getCycle(long time) {
-            for (Cycle cycle: values()) if (time >= cycle.start) return cycle;
+            if (time >= Midnight.start) return Midnight;
+            if (time >= Night.start) return Night;
+            if (time >= Sunset.start) return Sunset;
+            if (time >= Afternoon.start) return Afternoon;
+            if (time >= Noon.start) return Noon;
+            if (time >= Morning.start) return Morning;
             return Sunrise;
         }
 

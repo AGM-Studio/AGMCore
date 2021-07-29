@@ -39,7 +39,7 @@ public abstract class GUIInventory {
         reload();
         player.openInventory(inventory);
         GUI.saveGUIInventory(player, this);
-        GUI.plugin.messenger.Debug("GUI", "New inventory detected", "Player= §6" + player.getName(), "Inventory= §6" + title);
+        GUI.messenger.Debug("GUI", "New inventory detected", "Player= §6" + player.getName(), "Inventory= §6" + title);
     }
 
     public void close() {

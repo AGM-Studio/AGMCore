@@ -31,6 +31,7 @@ public class ExtensionLoader {
 
     public CoreExtension registerExtension(String fileName) {
         List<Class<?>> subs = FileUtils.getClasses(FOLDER, fileName, CoreExtension.class);
+        MESSENGER.Debug("Extensions", String.format("Found %d subs for the extension", subs != null ? subs.size() : 0));
         if (subs == null || subs.isEmpty()) return null;
 
         CoreExtension extension = createInstance(subs.get(0));
@@ -40,12 +41,13 @@ public class ExtensionLoader {
 
     public HashMap<String, CoreExtension> registerAllExtensions() {
         HashMap<String, CoreExtension> list = new HashMap<>();
-        for (String fileName: Arrays.stream(FOLDER.listFiles()).map(File::getName).collect(Collectors.toList()))
+        for (String fileName: Arrays.stream(FOLDER.listFiles()).map(File::getName).filter(name -> name.endsWith(".jar")).collect(Collectors.toList()))
             try {
+                MESSENGER.Debug("Extensions", "Found an extension, Registration has been started", "Filename= §6" + fileName);
                 CoreExtension extension = registerExtension(fileName);
                 list.put(extension.getName(), extension);
             } catch (Exception exception) {
-                MESSENGER.Warning("Unable to register enchantment called " + fileName);
+                MESSENGER.Warning("Unable to register extension named \"" + fileName + "\"");
                 MESSENGER.handleException(exception);
             }
         return list;
@@ -59,7 +61,7 @@ public class ExtensionLoader {
         try {
             Constructor<?>[] constructors = clazz.getConstructors();
             if (constructors.length == 0) {
-                expansion = (CoreExtension) clazz.newInstance();
+                expansion = (CoreExtension) clazz.getDeclaredConstructor().newInstance();
             } else {
                 for (Constructor<?> ctor : constructors) {
                     if (ctor.getParameterTypes().length == 0) {

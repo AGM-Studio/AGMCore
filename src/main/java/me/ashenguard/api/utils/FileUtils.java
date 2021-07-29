@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -23,13 +24,14 @@ public class FileUtils {
         try {
             if (!folder.exists()) return list;
 
-            FilenameFilter fileNameFilter = (dir, name) -> {
-                boolean isJar = name.endsWith(".jar");
-                if (fileName != null) {
-                    return isJar && name.substring(0, name.length() - 4)
-                            .equalsIgnoreCase(fileName.substring(0, fileName.length() - 4));
-                }
+            final String finalName;
+            if (fileName != null && fileName.endsWith(".jar")) finalName = fileName.substring(0, fileName.length() - 4);
+            else finalName = fileName;
 
+            FilenameFilter fileNameFilter = (dir, file) -> {
+                boolean isJar = file.endsWith(".jar");
+                String name = file.substring(0, file.length() - 4);
+                if (finalName != null) return isJar && name.equalsIgnoreCase(finalName);
                 return isJar;
             };
 
@@ -96,7 +98,7 @@ public class FileUtils {
             int length;
             while ((length = stream.read(buffer)) != -1) result.write(buffer, 0, length);
             result.close();
-            return result.toString("UTF-8");
+            return result.toString(StandardCharsets.UTF_8);
         } catch (Throwable throwable) {
             if (messenger != null) messenger.handleException(throwable);
             return "INPUT_STREAM_UNREADABLE";

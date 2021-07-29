@@ -2,7 +2,7 @@ name: AGMCore
 version: ${project.version}
 main: me.ashenguard.agmcore.AGMCore
 api-version: 1.13
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, ProtocolLib]
 authors: [Ashenguard]
 description: Basic API for AGMPlugins
 website: https://agmdev.xyz
@@ -13,19 +13,23 @@ permissions:
     default: op
     children:
       - AGMCore.Messages.*
-    AGMCore.Messages.*:
-      description: All permissions related to the messenger of this plugin
-      default: op
-      children:
-        - AGMCore.Messages.Info
-        - AGMCore.Messages.Warning
-        - AGMCore.Messages.Debug
-    AGMCore.Messages.Info:
-      description: Permission required to receive Info messages in the game.
-      default: op
-    AGMCore.Messages.Warning:
-      description: Permission required to receive Warning messages in the game.
-      default: op
-    AGMCore.Messages.Debug:
-      description: Permission required to receive Debug messages in the game.
-      default: op
+      - AGMCore.Admin
+  AGMCore.Messages.*:
+    description: All permissions related to the messenger of this plugin
+    default: op
+    children:
+      - AGMCore.Messages.Info
+      - AGMCore.Messages.Warning
+      - AGMCore.Messages.Debug
+  AGMCore.Messages.Info:
+    description: Permission required to receive Info messages in the game.
+    default: op
+  AGMCore.Messages.Warning:
+    description: Permission required to receive Warning messages in the game.
+    default: op
+  AGMCore.Messages.Debug:
+    description: Permission required to receive Debug messages in the game.
+    default: op
+  AGMCORE.Admin:
+    description: High level permission for adminitrators.
+    default: op

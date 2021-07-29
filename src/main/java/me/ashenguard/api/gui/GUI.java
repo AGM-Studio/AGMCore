@@ -2,7 +2,9 @@ package me.ashenguard.api.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import me.ashenguard.api.Configuration;
+import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.spigot.SpigotPlugin;
+import me.ashenguard.api.versions.MCVersion;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -14,6 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -26,8 +29,8 @@ public class GUI implements Listener {
     public static final String PLAYER_HEAD = "Player_Head";
     public static final String CUSTOM_HEAD = "Custom_Head";
 
-    public final SpigotPlugin plugin;
     public final Configuration config;
+    public final Messenger messenger;
 
     private void translateLegacy(ConfigurationSection section) {
         if (section == null) return;
@@ -36,7 +39,7 @@ public class GUI implements Listener {
                 String materialName = section.getString("Material.ID");
                 if (materialName.equals(CUSTOM_HEAD) || materialName.equals(PLAYER_HEAD)) continue;
                 XMaterial xMaterial = XMaterial.matchXMaterial(materialName).orElse(XMaterial.STONE);
-                if (plugin.isLegacy()) {
+                if (MCVersion.isLegacy()) {
                     Material material = xMaterial.parseMaterial();
                     if (material == null) material = Material.STONE;
                     section.set("Material.ID", material.name());
@@ -51,13 +54,22 @@ public class GUI implements Listener {
     }
 
     public GUI(SpigotPlugin plugin) {
-        this.plugin = plugin;
-        this.config = new Configuration(plugin, "GUI.yml", true);
+        this(plugin.messenger, new Configuration(plugin, "GUI.yml", true));
+        registerListeners(plugin);
+    }
 
-        if (plugin.isLegacy()) translateLegacy(config);
+    public GUI(Messenger messenger, Configuration config) {
+        this.messenger = messenger;
+        this.config = config;
 
+        if (MCVersion.isLegacy()) translateLegacy(config);
+
+        messenger.Debug("GUI", "§5GUI§r has been loaded");
+    }
+
+    public void registerListeners(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        plugin.messenger.Debug("GUI", "§5GUI§r has been loaded and its Listener has been registered");
+        messenger.Debug("GUI", "§5GUI§r Listeners has been registered");
     }
 
     // ---- GUI Inventories ---- //
@@ -84,7 +96,7 @@ public class GUI implements Listener {
         if (guiInventory == null || (guiInventory.inventoryOnly && (inventory == null || inventory.getType() == InventoryType.PLAYER))) return;
         if (guiInventory.cancelAlways) event.setCancelled(true);
 
-        plugin.messenger.Debug("GUI", "Inventory click detected", "Player= §6" + player.getName(), "Inventory= §6" + guiInventory.title);
+        messenger.Debug("GUI", "Inventory click detected", "Player= §6" + player.getName(), "Inventory= §6" + guiInventory.title);
         guiInventory.click(event);
     }
 
@@ -93,7 +105,7 @@ public class GUI implements Listener {
         Player player = (Player) event.getPlayer();
 
         GUIInventory guiInventory = removeGUIInventory(player);
-        if (guiInventory != null) plugin.messenger.Debug("GUI", "Inventory close detected", "Player= §6" + player.getName(), "Inventory= §6" + guiInventory.title);
+        if (guiInventory != null) messenger.Debug("GUI", "Inventory close detected", "Player= §6" + player.getName(), "Inventory= §6" + guiInventory.title);
     }
 
     public ItemStack getItemStack(OfflinePlayer player, String path) {

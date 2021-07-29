@@ -49,11 +49,20 @@ public class Placeholder {
         List<String> placeholders = new ArrayList<>();
         Matcher matcher = Pattern.compile("%([A-Z0-9a-z_]+?)%").matcher(string);
         while (matcher.find()) placeholders.add(matcher.group(1));
+        List<String> brackets = new ArrayList<>();
+        Matcher bracketMatcher = Pattern.compile("\\{([A-Z0-9a-z_]+?)}").matcher(string);
+        while (bracketMatcher.find()) brackets.add(bracketMatcher.group(1));
 
         for(String placeholder: placeholders) {
             if (isValid(placeholder)) {
                 String value = getValue(player, placeholder);
                 string = string.replaceFirst(String.format("%%%s%%", placeholder), value);
+            }
+        }
+        for(String bracket: brackets) {
+            if (isValid(bracket)) {
+                String value = getValue(player, bracket);
+                string = string.replaceFirst(String.format("{%s}", bracket), value);
             }
         }
         return string;
