@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 
+@SuppressWarnings("unused")
 public class EventCaller implements Listener {
     private static final AGMCore core = AGMCore.getInstance();
 

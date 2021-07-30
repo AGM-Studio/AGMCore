@@ -16,7 +16,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -31,6 +30,7 @@ public class GUI implements Listener {
 
     public final Configuration config;
     public final Messenger messenger;
+    public final SpigotPlugin plugin;
 
     private void translateLegacy(ConfigurationSection section) {
         if (section == null) return;
@@ -54,20 +54,25 @@ public class GUI implements Listener {
     }
 
     public GUI(SpigotPlugin plugin) {
-        this(plugin.messenger, new Configuration(plugin, "GUI.yml", true));
-        registerListeners(plugin);
+        this(plugin, "GUI.yml");
     }
 
-    public GUI(Messenger messenger, Configuration config) {
-        this.messenger = messenger;
+    public GUI(SpigotPlugin plugin, String config) {
+        this(plugin, new Configuration(plugin, config, true));
+    }
+
+    public GUI(SpigotPlugin plugin, Configuration config) {
+        this.plugin = plugin;
         this.config = config;
+        this.messenger = plugin.messenger;
 
         if (MCVersion.isLegacy()) translateLegacy(config);
+        registerListeners();
 
         messenger.Debug("GUI", "§5GUI§r has been loaded");
     }
 
-    public void registerListeners(JavaPlugin plugin) {
+    public void registerListeners() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         messenger.Debug("GUI", "§5GUI§r Listeners has been registered");
     }

@@ -63,7 +63,7 @@ public class ItemMaker {
         ItemMaker im = new ItemMaker(player, ID, value, data);
 
         String uuidString = section.getString("Material.UUID", "");
-        try { im.uuid = UUID.fromString(uuidString != null ? uuidString : ""); } catch (Throwable ignored) {}
+        try { im.uuid = UUID.fromString(uuidString); } catch (Throwable ignored) {}
 
         im.name = section.getString("Name", null);
         im.lore = section.isList("Lore") ? section.getStringList("Lore") : null;
@@ -115,14 +115,11 @@ public class ItemMaker {
 
     private ItemStack createBareItem() {
         if (id == null) return NULL.clone();
-        switch (id.toUpperCase()) {
-            case PLAYER_HEAD:
-                return getPlayerHead(player, value == null ? "self" : value);
-            case CUSTOM_HEAD:
-                return getCustomHead(uuid, value);
-            default:
-                return createSimpleItem(id, data);
-        }
+        return switch (id.toUpperCase()) {
+            case PLAYER_HEAD -> getPlayerHead(player, value == null ? "self" : value);
+            case CUSTOM_HEAD -> getCustomHead(uuid, value);
+            default -> createSimpleItem(id, data);
+        };
     }
 
     public static ItemStack createSimpleItem(String id) {
