@@ -43,7 +43,7 @@
                     <relocations>
                         <relocation>
                             <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                            <shadedPattern>me.me.ashenguard.api.nbt</shadedPattern>
+                            <shadedPattern>me.ashenguard.api.nbt</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
