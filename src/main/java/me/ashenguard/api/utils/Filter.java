@@ -2,6 +2,7 @@ package me.ashenguard.api.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
 public abstract class Filter<T> {
@@ -34,6 +35,14 @@ public abstract class Filter<T> {
         return new Filter<>() {
             @Override public boolean test(T item) {
                 return current.test(item) || filter.test(item);
+            }
+        };
+    }
+
+    public static <E> Filter<E> fromPredicate(Predicate<E> predicate) {
+        return new Filter<>() {
+            @Override public boolean test(E item) {
+                return predicate.test(item);
             }
         };
     }
