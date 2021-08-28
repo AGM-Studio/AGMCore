@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class PermanentEffect {
     private final PotionEffectType effectType;
     private final boolean immunity;
-    private final HashMap<LivingEntity, int> map = new HashMap<LivingEntity, int>();
+    private final HashMap<LivingEntity, Integer> map = new HashMap<>();
 
     public PermanentEffect(PotionEffectType effectType) {
         this(effectType, false);
