@@ -1,5 +1,6 @@
 package me.ashenguard.lib.events.equipment;
 
+import me.ashenguard.agmcore.AGMEvents;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -15,6 +16,10 @@ public final class ArmorEquipEvent extends PlayerEvent implements Cancellable {
     private final EquipMethod equipType;
     private final ArmorType type;
     private ItemStack oldArmorPiece, newArmorPiece;
+
+    public static void activate() {
+        AGMEvents.activateArmorEquipEvent();
+    }
 
     public ArmorEquipEvent(final Player player, final EquipMethod equipType, final ArmorType type, final ItemStack oldArmorPiece, final ItemStack newArmorPiece) {
         super(player);

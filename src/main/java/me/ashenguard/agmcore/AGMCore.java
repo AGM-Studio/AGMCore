@@ -61,7 +61,7 @@ public final class AGMCore extends SpigotPlugin {
     @Override
     public void onPluginDisable() {
         for (CoreExtension extension: extensions.values()) extension.onDisable();
-        EventCaller.deactivateDayCycleEvent(true);
+        AGMEvents.deactivateDayCycleEvent(true);
         messenger.Info("Plugin has been disabled");
     }
 }

@@ -12,11 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PermanentEffectManager implements Listener {
+    private static boolean isActive = false;
     private final static List<PermanentEffect> PERMANENT_EFFECTS = new ArrayList<>();
 
     public static void addEffect(PermanentEffect effect) {
         if (PERMANENT_EFFECTS.contains(effect)) return;
         PERMANENT_EFFECTS.add(effect);
+
+        if(isActive) return;
+        AGMEvents.activatePermanentEffects();
+        isActive = true;
     }
     public static void removeEffect(PermanentEffect effect) {
         PERMANENT_EFFECTS.remove(effect);

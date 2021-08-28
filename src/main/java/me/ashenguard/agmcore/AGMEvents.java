@@ -9,10 +9,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 
 @SuppressWarnings("unused")
-public class EventCaller implements Listener {
+public class AGMEvents implements Listener {
     private static final AGMCore core = AGMCore.getInstance();
 
+    private static boolean isArmorEquipEventActive = false;
+    private static boolean isPermanentEffectsActive = false;
+
     private static final int INTERVAL = 20;
+
     private static class DayCycleTask implements Runnable {
         @Override public void run() {
             for (World world: Bukkit.getServer().getWorlds()) {
@@ -24,10 +28,17 @@ public class EventCaller implements Listener {
     public static BukkitTask DayCycleCaller = null;
 
     public static void activateArmorEquipEvent() {
+        if (isArmorEquipEventActive) return;
         core.getServer().getPluginManager().registerEvents(new ArmorListener(core), core);
         try {
             core.getServer().getPluginManager().registerEvents(new DispenserListener(), core);
         } catch (Throwable ignored) {}
+        isArmorEquipEventActive = true;
+    }
+    public static void activatePermanentEffects() {
+        if (isPermanentEffectsActive) return;
+        core.getServer().getPluginManager().registerEvents(new PermanentEffectManager(), core);
+        isPermanentEffectsActive = true;
     }
     public static void activateDayCycleEvent() {
         if (DayCycleCaller != null) return;

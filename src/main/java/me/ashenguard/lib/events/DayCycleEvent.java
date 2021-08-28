@@ -1,6 +1,6 @@
 package me.ashenguard.lib.events;
 
-import me.ashenguard.agmcore.EventCaller;
+import me.ashenguard.agmcore.AGMEvents;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -13,7 +13,7 @@ public class DayCycleEvent extends Event {
     private final World world;
 
     public static void activate() {
-        EventCaller.activateDayCycleEvent();
+        AGMEvents.activateDayCycleEvent();
     }
 
     public DayCycleEvent(World world) {
