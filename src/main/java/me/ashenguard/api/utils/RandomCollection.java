@@ -1,4 +1,4 @@
-package me.ashenguard.api.utils.extra;
+package me.ashenguard.api.utils;
 
 import java.util.*;
 import java.util.function.Function;

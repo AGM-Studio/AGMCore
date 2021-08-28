@@ -1,4 +1,4 @@
-package me.ashenguard.api.utils.extra;
+package me.ashenguard.api.utils;
 
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;

@@ -55,7 +55,7 @@ public enum MessageMode {
         Prefix(String prefix) {
             if (prefix == null) return;
             this.prefix = prefix;
-            this.tab = String.join("", Collections.nCopies(prefix.length(), " "));
+            this.tab = String.join("", Collections.nCopies(ChatColor.stripColor(prefix).length(), " "));
         }
     }
 }

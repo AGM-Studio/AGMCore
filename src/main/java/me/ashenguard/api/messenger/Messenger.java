@@ -23,7 +23,7 @@ public class Messenger {
     public final File exceptionFolder;
 
     public boolean debugger;
-    public HashMap<me.ashenguard.api.messenger.MessageMode, Boolean> inGameMessaging;
+    public HashMap<MessageMode, Boolean> inGameMessaging;
     public HashMap<String, Boolean> debugs;
     public String prefix;
 
@@ -40,9 +40,9 @@ public class Messenger {
      */
     public void setup(Configuration config) {
         inGameMessaging = new HashMap<>();
-        inGameMessaging.put(me.ashenguard.api.messenger.MessageMode.Info, config == null || config.getBoolean("InGameMessages.Info", true));
-        inGameMessaging.put(me.ashenguard.api.messenger.MessageMode.Warning, config == null || config.getBoolean("InGameMessages.Warning", true));
-        inGameMessaging.put(me.ashenguard.api.messenger.MessageMode.Debug, config == null || config.getBoolean("InGameMessages.Debug", true));
+        inGameMessaging.put(MessageMode.Info, config == null || config.getBoolean("InGameMessages.Info", true));
+        inGameMessaging.put(MessageMode.Warning, config == null || config.getBoolean("InGameMessages.Warning", true));
+        inGameMessaging.put(MessageMode.Debug, config == null || config.getBoolean("InGameMessages.Debug", true));
 
         this.debugger = config != null && config.getBoolean("Debug.Enable", false);
         this.prefix = config == null ? plugin.getName() : config.getString("Prefix", plugin.getName());
@@ -55,36 +55,36 @@ public class Messenger {
     }
 
     /**
-     * A method as a shortcut for {@link #sendMessage(me.ashenguard.api.messenger.MessageMode, CommandSender, String...) sendMessage} for {@link me.ashenguard.api.messenger.MessageMode#Debug}.
+     * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Debug}.
      * It also will check if {@link #debugger} is set to "True" and the type given is enabled.
      */
     public void Debug(String type, String... messages) {
         if (debugger && debugs.getOrDefault(type, true))
-            sendMessage(me.ashenguard.api.messenger.MessageMode.Debug, Bukkit.getConsoleSender(), messages);
+            sendMessage(MessageMode.Debug, Bukkit.getConsoleSender(), messages);
     }
     /**
-     * A method as a shortcut for {@link #sendMessage(me.ashenguard.api.messenger.MessageMode, CommandSender, String...) sendMessage} for {@link me.ashenguard.api.messenger.MessageMode#Warning}.
+     * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Warning}.
      */
     public void Warning(String... messages) {
-        sendMessage(me.ashenguard.api.messenger.MessageMode.Warning, Bukkit.getConsoleSender(), messages);
+        sendMessage(MessageMode.Warning, Bukkit.getConsoleSender(), messages);
     }
     /**
-     * A method as a shortcut for {@link #sendMessage(me.ashenguard.api.messenger.MessageMode, CommandSender, String...) sendMessage} for {@link me.ashenguard.api.messenger.MessageMode#Info}.
+     * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Info}.
      */
     public void Info(String... messages) {
-        sendMessage(me.ashenguard.api.messenger.MessageMode.Info, Bukkit.getConsoleSender(), messages);
+        sendMessage(MessageMode.Info, Bukkit.getConsoleSender(), messages);
     }
     /**
-     * A method as a shortcut for {@link #sendMessage(me.ashenguard.api.messenger.MessageMode, CommandSender, String...) sendMessage} for {@link me.ashenguard.api.messenger.MessageMode#Empty} which will send message as normal without any formatting or etc.
+     * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Empty} which will send message as normal without any formatting or etc.
      */
     public void send(CommandSender target, String... messages) {
-        sendMessage(me.ashenguard.api.messenger.MessageMode.Empty, target, messages);
+        sendMessage(MessageMode.Empty, target, messages);
     }
     /**
-     * A method as a shortcut for {@link #sendMessage(me.ashenguard.api.messenger.MessageMode, CommandSender, String...) sendMessage} for {@link me.ashenguard.api.messenger.MessageMode#Personal}.
+     * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Personal}.
      */
     public void response(CommandSender target, String... messages) {
-        sendMessage(me.ashenguard.api.messenger.MessageMode.Personal, target, messages);
+        sendMessage(MessageMode.Personal, target, messages);
     }
 
     /**
@@ -94,9 +94,9 @@ public class Messenger {
      * @param target The target messages will be sent to
      * @param messages The messages to be sent to the target
      */
-    public void sendMessage(@NotNull me.ashenguard.api.messenger.MessageMode mode, CommandSender target, String... messages) {
+    public void sendMessage(@NotNull MessageMode mode, CommandSender target, String... messages) {
         if (messages == null) return;
-        boolean sendEveryone = (!(target instanceof Player) && (inGameMessaging.getOrDefault(mode, true) && !Arrays.asList(me.ashenguard.api.messenger.MessageMode.Personal, me.ashenguard.api.messenger.MessageMode.Operator, me.ashenguard.api.messenger.MessageMode.Empty).contains(mode)));
+        boolean sendEveryone = (!(target instanceof Player) && (inGameMessaging.getOrDefault(mode, true) && !Arrays.asList(MessageMode.Personal, MessageMode.Operator, MessageMode.Empty).contains(mode)));
         Collection<? extends Player> players = sendEveryone ? Bukkit.getOnlinePlayers() : new ArrayList<>();
         MessageMode.Prefix prefix = mode.getPrefix(this);
         for (int i = 0; i < messages.length; i++) {
