@@ -3,6 +3,8 @@ package me.ashenguard.agmcore;
 import me.ashenguard.lib.events.DayCycleEvent;
 import me.ashenguard.lib.events.equipment.ArmorListener;
 import me.ashenguard.lib.events.equipment.DispenserListener;
+import me.ashenguard.lib.spigot.GuardianManager;
+import me.ashenguard.lib.spigot.PermanentEffectManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
@@ -14,6 +16,8 @@ public class AGMEvents implements Listener {
 
     private static boolean isArmorEquipEventActive = false;
     private static boolean isPermanentEffectsActive = false;
+    private static boolean isGuardiansActive = false;
+    private static boolean isDayCycleActive = false;
 
     private static final int INTERVAL = 20;
 
@@ -25,7 +29,13 @@ public class AGMEvents implements Listener {
             }
         }
     }
-    public static BukkitTask DayCycleCaller = null;
+    private static BukkitTask DayCycleCaller = null;
+    private static class GuardianCheckTask implements Runnable {
+        @Override public void run() {
+            GuardianManager.checkGuardians();
+        }
+    }
+    private static BukkitTask GuardianCheck = null;
 
     public static void activateArmorEquipEvent() {
         if (isArmorEquipEventActive) return;
@@ -40,12 +50,25 @@ public class AGMEvents implements Listener {
         core.getServer().getPluginManager().registerEvents(new PermanentEffectManager(), core);
         isPermanentEffectsActive = true;
     }
+    public static void activateGuardians() {
+        if (isGuardiansActive && GuardianCheck == null) return;
+        core.getServer().getPluginManager().registerEvents(new GuardianManager(), core);
+        GuardianCheck = Bukkit.getScheduler().runTaskTimer(AGMCore.getInstance(), new GuardianCheckTask(), 0, 60 * INTERVAL);
+        isGuardiansActive = true;
+    }
+    public static void deactivateGuardians(boolean confirm) {
+        if (!confirm || !isGuardiansActive || GuardianCheck == null) return;
+        GuardianCheck.cancel();
+        isGuardiansActive = false;
+    }
     public static void activateDayCycleEvent() {
-        if (DayCycleCaller != null) return;
+        if (isDayCycleActive && DayCycleCaller != null) return;
         DayCycleCaller = Bukkit.getScheduler().runTaskTimer(AGMCore.getInstance(), new DayCycleTask(), 0, INTERVAL);
+        isDayCycleActive = true;
     }
     public static void deactivateDayCycleEvent(boolean confirm) {
         if (!confirm || DayCycleCaller == null) return;
         DayCycleCaller.cancel();
+        isDayCycleActive = false;
     }
 }

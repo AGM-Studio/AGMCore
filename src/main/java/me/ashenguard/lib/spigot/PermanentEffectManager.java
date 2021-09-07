@@ -1,5 +1,6 @@
-package me.ashenguard.agmcore;
+package me.ashenguard.lib.spigot;
 
+import me.ashenguard.agmcore.AGMEvents;
 import me.ashenguard.lib.spigot.PermanentEffect;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
