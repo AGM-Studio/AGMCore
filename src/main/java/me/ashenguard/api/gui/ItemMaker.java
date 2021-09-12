@@ -5,6 +5,7 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import me.ashenguard.api.messenger.PHManager;
+import me.ashenguard.api.versions.MCVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -144,7 +145,10 @@ public class ItemMaker {
         NBTItem nbt = new NBTItem(item, true);
 
         NBTCompound skull = nbt.addCompound("SkullOwner");
-        skull.setString("Id", uuid == null ? UUID.randomUUID().toString() : uuid.toString());
+        if (MCVersion.getMCVersion().isHigherThan(MCVersion.V1_16))
+            skull.setUUID("Id", uuid == null ? UUID.randomUUID() : uuid);
+        else
+            skull.setString("Id", uuid == null ? UUID.randomUUID().toString() : uuid.toString());
 
         NBTListCompound texture = skull.addCompound("Properties").getCompoundList("textures").addCompound();
         texture.setString("Value",  value);

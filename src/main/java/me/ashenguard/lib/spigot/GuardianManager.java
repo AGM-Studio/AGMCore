@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class GuardianManager implements Listener {
@@ -31,7 +32,7 @@ public class GuardianManager implements Listener {
         location.add(offset);
         while (!location.getBlock().isEmpty()) location.add(0, 0.5, 1);
 
-        Entity entity = world.spawnEntity(target.getLocation(), type, false);
+        Entity entity = world.spawnEntity(location, type);
         Creature creature;
         if (entity instanceof Creature) {
             creature = (Creature) entity;
@@ -79,7 +80,10 @@ public class GuardianManager implements Listener {
     }
 
     public static void checkGuardians() {
-        guards.stream().filter(guardian -> !guardian.getEntity().isValid()).forEach(guardian -> removeGuardian(guardian, GuardianRemoveEvent.Reason.UNKNOWN));
+        guards.removeIf(Objects::isNull);
+        for (Guardian guardian : guards)
+            if (!guardian.getEntity().isValid())
+                removeGuardian(guardian, GuardianRemoveEvent.Reason.UNKNOWN);
     }
 
     @EventHandler
@@ -130,8 +134,16 @@ public class GuardianManager implements Listener {
 
     @EventHandler
     public void onDeath(EntityDeathEvent event) {
-        guards.stream().filter(guardian -> event.getEntity() == guardian.getEntity()).forEach(guardian -> removeGuardian(guardian, GuardianRemoveEvent.Reason.DIED));
-        guards.stream().filter(guardian -> event.getEntity() == guardian.getTarget()).forEach(guardian -> removeGuardian(guardian, GuardianRemoveEvent.Reason.TARGET_DIED));
+        checkGuardians();
+
+        for (Guardian guardian : guards)
+            if (event.getEntity() == guardian.getEntity())
+                removeGuardian(guardian, GuardianRemoveEvent.Reason.DIED);
+
+        for (Guardian guardian : guards)
+            if (event.getEntity() == guardian.getTarget())
+                removeGuardian(guardian, GuardianRemoveEvent.Reason.TARGET_DIED);
+
         if (isGuardian(event.getEntity())) {
             event.getDrops().clear();
             event.setDroppedExp(0);

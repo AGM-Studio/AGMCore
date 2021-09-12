@@ -34,6 +34,7 @@ public class Guardian {
 
     public void attack(LivingEntity entity) {
         if (entity == null) return;
+        if (this.entity.getTarget() != null) return;
 
         GuardianTargetEntityEvent event = new GuardianTargetEntityEvent(this, entity);
         Bukkit.getServer().getPluginManager().callEvent(event);

@@ -1,8 +1,7 @@
 package me.ashenguard.api.messenger;
 
-import me.ashenguard.api.reflections.CraftBukkit;
-import me.ashenguard.api.reflections.NMS;
 import me.ashenguard.api.spigot.SpigotPlugin;
+import me.ashenguard.api.utils.Reflections;
 import me.ashenguard.exceptions.NullValue;
 import me.ashenguard.lib.events.ActionBarMessageEvent;
 import org.bukkit.Bukkit;
@@ -29,14 +28,14 @@ public class ActionBarMessage {
     private static boolean initialized = false;
 
     private static void initialize() throws Throwable {
-        craftPlayerClass = CraftBukkit.getClass("entity.CraftPlayer");
-        Class<?> packetPlayOutChatClass = NMS.getClass("PacketPlayOutChat");
-        Class<?> packetClass = NMS.getClass("Packet");
-        Class<?> chatComponentTextClass = NMS.getClass("ChatComponentText");
-        Class<?> iChatBaseComponentClass = NMS.getClass("IChatBaseComponent");
-        Class<?> chatMessageTypeClass = NMS.getClass("ChatMessageType");
-        Class<?> entityPlayerClass = NMS.getClass("EntityPlayer");
-        Class<?> playerConnectionClass = NMS.getClass("PlayerConnection");
+        craftPlayerClass = Reflections.getClass("entity.CraftPlayer");
+        Class<?> packetPlayOutChatClass = Reflections.getClass("PacketPlayOutChat");
+        Class<?> packetClass = Reflections.getClass("Packet");
+        Class<?> chatComponentTextClass = Reflections.getClass("ChatComponentText");
+        Class<?> iChatBaseComponentClass = Reflections.getClass("IChatBaseComponent");
+        Class<?> chatMessageTypeClass = Reflections.getClass("ChatMessageType");
+        Class<?> entityPlayerClass = Reflections.getClass("EntityPlayer");
+        Class<?> playerConnectionClass = Reflections.getClass("PlayerConnection");
 
         NullValue.check("CraftPlayerClass", craftPlayerClass);
         NullValue.check("PacketPlayOutChatClass", packetPlayOutChatClass);
