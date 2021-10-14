@@ -43,5 +43,11 @@ public enum MCVersion {
     public static boolean isLegacy() {
         return !getMCVersion().newAPI;
     }
+
+
+    @Override
+    public String toString() {
+        return String.format("%d_%d", version.major, version.minor);
+    }
 }
 

@@ -15,7 +15,7 @@ public class Version implements Comparable<Version> {
 
     public Version(String version) {
         Matcher validator = PATTERN.matcher(version);
-        if (!validator.find()) throw new IllegalFormatException();
+        if (!validator.find()) throw new IllegalFormatException("version format is invalid");
 
         version = validator.group();
         Matcher matcher = Pattern.compile("\\d+").matcher(version);

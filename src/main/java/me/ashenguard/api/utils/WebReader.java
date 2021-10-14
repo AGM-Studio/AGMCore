@@ -1,9 +1,11 @@
 package me.ashenguard.api.utils;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -102,6 +104,15 @@ public class WebReader {
         } catch (JSONException exception) {
             log(String.format("JSON failed due %s", exception.getMessage()));
             return null;
+        }
+    }
+    
+    public boolean saveAs(File file) {
+        try {
+            FileUtils.copyURLToFile(new URL(url), file);
+            return true;
+        } catch (Throwable throwable) {
+            return false;
         }
     }
 }
