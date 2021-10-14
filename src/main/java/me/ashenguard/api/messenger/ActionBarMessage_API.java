@@ -13,10 +13,6 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class ActionBarMessage_API extends ActionBarMessage{
-    public ActionBarMessage_API(SpigotPlugin plugin) {
-        super(plugin);
-    }
-
     private static Class<?> craftPlayerClass;
 
     private static Constructor<?> chatComponentTextConstructor;

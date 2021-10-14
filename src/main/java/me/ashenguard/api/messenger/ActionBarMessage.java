@@ -1,6 +1,5 @@
 package me.ashenguard.api.messenger;
 
-import me.ashenguard.agmcore.AGMCore;
 import me.ashenguard.api.spigot.SpigotPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -9,9 +8,7 @@ import org.bukkit.entity.Player;
 public abstract class ActionBarMessage {
     private static ActionBarMessage instance = null;
     public static ActionBarMessage getInstance() {
-        if (instance == null) {
-            instance = new ActionBarMessage_API(AGMCore.getInstance());
-        }
+        if (instance == null) instance = new ActionBarMessage_API();
         return instance;
     }
     public static void setInstance(ActionBarMessage instance) {
@@ -40,27 +37,6 @@ public abstract class ActionBarMessage {
     }
 
     public static void sendActionBarToAllPlayers(SpigotPlugin plugin, String message, int duration) {
-        for (Player p : Bukkit.getOnlinePlayers()) sendActionBar(plugin, p, message, duration);
-    }
-
-    private final SpigotPlugin plugin;
-    public ActionBarMessage(SpigotPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public void sendActionBar(Player player, String message) {
-        sendActionBar(plugin, player, message);
-    }
-
-    public void sendActionBar(Player player, String message, int duration) {
-        sendActionBar(plugin,player, message, duration);
-    }
-
-    public void sendActionBarToAllPlayers(String message) {
-        sendActionBarToAllPlayers(plugin, message, -1);
-    }
-
-    public void sendActionBarToAllPlayers(String message, int duration) {
         for (Player p : Bukkit.getOnlinePlayers()) sendActionBar(plugin, p, message, duration);
     }
 }
