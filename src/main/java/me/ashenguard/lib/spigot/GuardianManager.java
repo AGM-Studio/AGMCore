@@ -81,7 +81,8 @@ public class GuardianManager implements Listener {
 
     public static void checkGuardians() {
         guards.removeIf(Objects::isNull);
-        for (Guardian guardian : guards)
+        List<Guardian> invalids = guards.stream().filter(guardian -> !guardian.getEntity().isValid()).collect(Collectors.toList());
+        for (Guardian guardian : invalids)
             if (!guardian.getEntity().isValid())
                 removeGuardian(guardian, GuardianRemoveEvent.Reason.UNKNOWN);
     }
