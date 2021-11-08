@@ -4,6 +4,7 @@ import me.ashenguard.api.bstats.Metrics;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.versions.MCVersion;
 import me.ashenguard.api.versions.Version;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -96,8 +97,9 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         onPluginEnable();
 
-        messenger.Info("The plugin was successfully enabled.");
+        if (!Bukkit.getPluginManager().isPluginEnabled(this)) return;
 
+        messenger.Info("The plugin was successfully enabled.");
         messenger.updateNotification(getServer().getConsoleSender());
     }
 
@@ -110,7 +112,7 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
     public void onDisable() {
         onPluginDisable();
 
-        messenger.Info("The plugin was disabled.");
+        messenger.Info("The plugin is now disabled.");
     }
 
     /**
