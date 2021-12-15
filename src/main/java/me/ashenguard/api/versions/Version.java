@@ -11,7 +11,7 @@ public class Version implements Comparable<Version> {
     public final int major;
     public final int minor;
     public final int patch;
-    public final me.ashenguard.api.versions.VersionStatus status;
+    public final VersionStatus status;
 
     public Version(String version) {
         Matcher validator = PATTERN.matcher(version);
@@ -23,16 +23,16 @@ public class Version implements Comparable<Version> {
         this.major = matcher.find() ? Integer.parseInt(matcher.group()) : 0;
         this.minor = matcher.find() ? Integer.parseInt(matcher.group()) : 0;
         this.patch = matcher.find() ? Integer.parseInt(matcher.group()) : 0;
-        this.status = me.ashenguard.api.versions.VersionStatus.get(version);
+        this.status = VersionStatus.get(version);
     }
-    public Version(int major, int minor, int patch, me.ashenguard.api.versions.VersionStatus status) {
+    public Version(int major, int minor, int patch, VersionStatus status) {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
         this.status = status;
     }
     public Version(int major, int minor, int patch) {
-        this(major, minor, patch, me.ashenguard.api.versions.VersionStatus.Release);
+        this(major, minor, patch, VersionStatus.Release);
     }
     public Version(int major, int minor, VersionStatus status) {
         this(major, minor, 0, status);

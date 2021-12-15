@@ -2,6 +2,7 @@ package me.ashenguard.api.messenger;
 
 import me.ashenguard.api.spigot.SpigotPlugin;
 import me.ashenguard.api.spigot.SpigotResource;
+import me.ashenguard.api.versions.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
@@ -122,14 +123,16 @@ public class Messenger {
     public void updateNotification(CommandSender target, boolean updates) {
         if (target == null || !target.isOp() || plugin == null) return;
 
-        SpigotResource resource = new SpigotResource(plugin.getSpigotID());
-        reminder(() -> {
-            // Update Check
-            if (updates && resource.version.isHigher(plugin.getVersion())) {
-                send(target, "There is a §anew update§r available on SpigotMC");
-                send(target, String.format("This version: §c%s§r", plugin.getVersion()));
-                send(target, "SpigotMC version: §a%s§r", resource.version.toString(true));
-            }
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+            Version version = SpigotResource.getVersion(this.plugin.getSpigotID());
+            reminder(() -> {
+                // Update Check
+                if (updates && version.isHigher(plugin.getVersion())) {
+                    send(target, "There is a §anew update§r available on SpigotMC");
+                    send(target, String.format("This version: §c%s§r", plugin.getVersion()));
+                    send(target, String.format("SpigotMC version: §a%s§r", version.toString(true)));
+                }
+            });
         });
     }
 

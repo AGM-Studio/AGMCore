@@ -30,7 +30,7 @@ public class SpigotResource {
     public SpigotResource(int ID) {
         this.ID = ID;
         this.page = String.format("https://www.spigotmc.org/resources/%d/", ID);
-        this.version = getVersion();
+        this.version = getVersion(ID);
 
         JSONObject jsonObject = new WebReader(String.format("https://api.spiget.org/v2/resources/%d", ID)).readJSON();
         if (jsonObject == null) {
@@ -72,9 +72,9 @@ public class SpigotResource {
         }
     }
 
-    private Version getVersion() {
+    public static Version getVersion(int ID) {
         try {
-            return new Version(new WebReader("https://api.spigotmc.org/legacy/update.php?resource=" + this.ID).read());
+            return new Version(new WebReader("https://api.spigotmc.org/legacy/update.php?resource=" + ID).read());
         } catch (Exception ignored) {
             return new Version(1, 0);
         }

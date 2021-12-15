@@ -106,7 +106,7 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
     /**
      * Override of {@link JavaPlugin#onDisable()} with nothing special happening.
      *
-     * It just will call {@link #onPluginEnable()} for some works before sending the disabling message.
+     * It just will call {@link #onPluginDisable()} for some works before sending the disabling message.
      */
     @Override
     public void onDisable() {
