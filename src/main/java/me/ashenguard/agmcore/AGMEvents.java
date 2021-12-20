@@ -1,6 +1,7 @@
 package me.ashenguard.agmcore;
 
 import me.ashenguard.lib.events.DayCycleEvent;
+import me.ashenguard.lib.events.door.DoorManager;
 import me.ashenguard.lib.events.equipment.ArmorListener;
 import me.ashenguard.lib.events.equipment.DispenserListener;
 import me.ashenguard.lib.spigot.GuardianManager;
@@ -18,6 +19,7 @@ public class AGMEvents implements Listener {
     private static boolean isPermanentEffectsActive = false;
     private static boolean isGuardiansActive = false;
     private static boolean isDayCycleActive = false;
+    private static boolean isDoorActive = false;
 
     private static final int INTERVAL = 20;
 
@@ -70,5 +72,10 @@ public class AGMEvents implements Listener {
         if (!confirm || DayCycleCaller == null) return;
         DayCycleCaller.cancel();
         isDayCycleActive = false;
+    }
+    public static void activateDoorEvent() {
+        if (isDoorActive) return;
+        core.getServer().getPluginManager().registerEvents(new DoorManager(), core);
+        isDoorActive = true;
     }
 }

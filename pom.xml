@@ -4,7 +4,7 @@
 
     <groupId>me.ashenguard</groupId>
     <artifactId>AGMCore</artifactId>
-    <version>3.2</version>
+    <version>3.3</version>
     <packaging>jar</packaging>
 
     <name>AGMCore</name>
