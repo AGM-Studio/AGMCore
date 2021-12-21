@@ -6,6 +6,4 @@ public interface DoorEvent {
     Block getBlock();
     DoorManager.DoorAction getAction();
     DoorManager.DoorType getDoorType();
-
-
 }

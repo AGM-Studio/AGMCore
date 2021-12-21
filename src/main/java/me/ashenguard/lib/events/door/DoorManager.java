@@ -27,7 +27,7 @@ public class DoorManager implements Listener {
         Block block = event.getClickedBlock();
         String type = block == null ? "null" : block.getType().name().toLowerCase();
         // Ignoring any non-door and iron doors
-        if (!type.contains("door") || type.contains("iron")) return;
+        if (!(type.contains("door") || type.contains("gate")) || type.contains("iron")) return;
 
         // Sneak-Click check
         if (player.isSneaking() && player.getEquipment() != null) {
@@ -63,6 +63,6 @@ public class DoorManager implements Listener {
     }
 
     public enum DoorType {
-        DOOR, TRAP_DOOR
+        DOOR, TRAP_DOOR, GATE
     }
 }
