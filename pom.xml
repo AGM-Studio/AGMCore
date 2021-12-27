@@ -33,7 +33,7 @@
                     <target>16</target>
                     <source>16</source>
                     <encoding>UTF-8</encoding>
-                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <useIncrementalCompilation>true</useIncrementalCompilation>
                 </configuration>
             </plugin>
             <plugin>
