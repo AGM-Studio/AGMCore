@@ -3,6 +3,7 @@ package me.ashenguard.agmcore;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.ashenguard.agmcore.extension.CoreExtension;
 import me.ashenguard.agmcore.extension.ExtensionLoader;
+import me.ashenguard.api.bstats.Metrics;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.spigot.SpigotPlugin;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public final class AGMCore extends SpigotPlugin {
@@ -28,7 +30,7 @@ public final class AGMCore extends SpigotPlugin {
 
     @Override
     public @NotNull List<String> getSoftRequirements() {
-        return Arrays.asList("PlaceholderAPI", "ProtocolLib");
+        return Arrays.asList("PlaceholderAPI", "ProtocolLib", "Citizens");
     }
 
     @Override
@@ -54,6 +56,13 @@ public final class AGMCore extends SpigotPlugin {
         if (PHManager.enable) new Placeholders();
         ExtensionLoader extensionLoader = new ExtensionLoader();
         extensions = extensionLoader.registerAllExtensions();
+
+        Metrics.AdvancedPie extension_chart = new Metrics.AdvancedPie("extensions", () -> {
+            Map<String, Integer> map = new HashMap<>();
+            for (String extension: extensions.keySet()) map.put(extension, 1);
+            return map;
+        });
+        metrics.addCustomChart(extension_chart);
 
         MinecraftVersion.getVersion();
     }
