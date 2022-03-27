@@ -13,10 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class Messenger {
@@ -27,6 +24,8 @@ public class Messenger {
     public HashMap<MessageMode, Boolean> inGameMessaging;
     public HashMap<String, Boolean> debugs;
     public String prefix;
+
+    private final List<String> criticalCache = new ArrayList<>();
 
     public Messenger(SpigotPlugin plugin) {
         this.plugin = plugin;
@@ -63,17 +62,35 @@ public class Messenger {
         if (debugger && debugs.getOrDefault(type, true))
             sendMessage(MessageMode.Debug, Bukkit.getConsoleSender(), messages);
     }
+    public void debug(String type, String... messages) {
+        Debug(type, messages);
+    }
+    /**
+     * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Warning}.
+     */
+    public void Critical(String... messages) {
+        sendMessage(MessageMode.Critical, Bukkit.getConsoleSender(), messages);
+    }
+    public void critical(String... messages) {
+        Warning(messages);
+    }
     /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Warning}.
      */
     public void Warning(String... messages) {
         sendMessage(MessageMode.Warning, Bukkit.getConsoleSender(), messages);
     }
+    public void warning(String... messages) {
+        Warning(messages);
+    }
     /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Info}.
      */
     public void Info(String... messages) {
         sendMessage(MessageMode.Info, Bukkit.getConsoleSender(), messages);
+    }
+    public void info(String... messages) {
+        Info(messages);
     }
     /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Empty} which will send message as normal without any formatting or etc.
@@ -97,6 +114,7 @@ public class Messenger {
      */
     public void sendMessage(@NotNull MessageMode mode, CommandSender target, String... messages) {
         if (messages == null) return;
+        boolean saveCritical = true;
         boolean sendEveryone = (!(target instanceof Player) && (inGameMessaging.getOrDefault(mode, true) && !Arrays.asList(MessageMode.Personal, MessageMode.Operator, MessageMode.Empty).contains(mode)));
         Collection<? extends Player> players = sendEveryone ? Bukkit.getOnlinePlayers() : new ArrayList<>();
         MessageMode.Prefix prefix = mode.getPrefix(this);
@@ -105,8 +123,14 @@ public class Messenger {
             target.sendMessage(message);
             if (sendEveryone)
                 for (Player player:players)
-                    if (mode.hasPermission(plugin, player))
+                    if (mode.hasPermission(plugin, player)) {
                         player.sendMessage(message);
+                        saveCritical = false;
+                    }
+
+            if (mode == MessageMode.Critical && saveCritical) {
+                criticalCache.add(message);
+            }
         }
     }
 
@@ -122,15 +146,18 @@ public class Messenger {
      */
     public void updateNotification(CommandSender target, boolean updates) {
         if (target == null || !target.isOp() || plugin == null) return;
+        for (String message: criticalCache)
+            target.sendMessage(message);
+        criticalCache.clear();
 
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             Version version = SpigotResource.getVersion(this.plugin.getSpigotID());
             reminder(() -> {
                 // Update Check
                 if (updates && version.isHigher(plugin.getVersion())) {
-                    send(target, "There is a §anew update§r available on SpigotMC");
-                    send(target, String.format("This version: §c%s§r", plugin.getVersion()));
-                    send(target, String.format("SpigotMC version: §a%s§r", version.toString(true)));
+                    response(target, "There is a §anew update§r available on SpigotMC");
+                    response(target, String.format("This version: §c%s§r", plugin.getVersion()));
+                    response(target, String.format("SpigotMC version: §a%s§r", version.toString(true)));
                 }
             });
         });

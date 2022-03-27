@@ -10,6 +10,7 @@ import java.util.Collections;
 public enum MessageMode {
     Info(ChatColor.GREEN),
     Warning(ChatColor.RED),
+    Critical(ChatColor.DARK_RED, "Warning"),
     Debug(ChatColor.YELLOW),
     Operator(ChatColor.AQUA, "*"),
     Personal(ChatColor.LIGHT_PURPLE, null, ""),
