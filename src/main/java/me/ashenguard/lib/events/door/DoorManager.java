@@ -1,6 +1,5 @@
 package me.ashenguard.lib.events.door;
 
-import me.ashenguard.agmcore.AGMCore;
 import me.ashenguard.agmcore.AGMEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -50,7 +49,6 @@ public class DoorManager implements Listener {
 
         Block block = event.getBlock();
         String type = block.getType().name().toLowerCase();
-        AGMCore.getMessenger().Warning(block.getType().name());
         if (!type.contains("door")) return;
 
         DoorAction action = event.getNewCurrent() > 0 ? DoorAction.OPEN : DoorAction.CLOSE;

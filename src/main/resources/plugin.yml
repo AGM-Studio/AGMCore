@@ -1,8 +1,8 @@
 name: AGMCore
 version: ${project.version}
 main: me.ashenguard.agmcore.AGMCore
-api-version: 1.13
-softdepend: [PlaceholderAPI, ProtocolLib]
+api-version: 1.16
+softdepend: [PlaceholderAPI, ProtocolLib, Citizens]
 authors: [Ashenguard]
 description: Basic API for AGMPlugins
 website: https://agmdev.xyz
