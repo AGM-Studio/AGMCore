@@ -121,10 +121,16 @@ public class GUI implements Listener {
     }
 
     public static ItemStack getItemStack(@NotNull ItemStack itemStack, OfflinePlayer player, String name, List<String> lore) {
-        return getItemStack(itemStack, player, name, lore, false);
+        return getItemStack(itemStack, player, name, lore, false, -1);
     }
     public static ItemStack getItemStack(@NotNull ItemStack itemStack, OfflinePlayer player, String name, List<String> lore, boolean glow) {
-        return ItemMaker.designItem(itemStack, player, name, lore, glow, 1);
+        return ItemMaker.designItem(itemStack, player, name, lore, glow, 1, -1);
+    }
+    public static ItemStack getItemStack(@NotNull ItemStack itemStack, OfflinePlayer player, String name, List<String> lore, int customModelData) {
+        return ItemMaker.designItem(itemStack, player, name, lore, false, 1, customModelData);
+    }
+    public static ItemStack getItemStack(@NotNull ItemStack itemStack, OfflinePlayer player, String name, List<String> lore, boolean glow, int customModelData) {
+        return ItemMaker.designItem(itemStack, player, name, lore, glow, 1, customModelData);
     }
 }
 

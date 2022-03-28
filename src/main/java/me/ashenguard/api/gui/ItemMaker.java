@@ -38,6 +38,7 @@ public class ItemMaker {
     public List<String> lore = null;
     public boolean glow = false;
     public String amount = "1";
+    public int customModelData = -1;
 
     public ItemMaker(OfflinePlayer player, String id) {
         this.player = player;
@@ -70,15 +71,24 @@ public class ItemMaker {
         im.lore = section.isList("Lore") ? section.getStringList("Lore") : null;
         im.glow = section.getBoolean("Glow", false);
         im.amount = section.getString("Amount", "1");
+        im.customModelData = section.getInt("CustomModelData", -1);
 
         return im;
     }
 
     public static ItemStack designItem(ItemStack item, OfflinePlayer player, String name, List<String> lore, boolean glow, int amount) {
-        return designItem(item, name == null ? null : PHManager.translate(player, name), lore == null ? null : PHManager.translate(player, lore), glow, amount);
+        return designItem(item, player, name, lore, glow, amount, -1);
+    }
+
+    public static ItemStack designItem(ItemStack item, OfflinePlayer player, String name, List<String> lore, boolean glow, int amount, int customModelData) {
+        return designItem(item, name == null ? null : PHManager.translate(player, name), lore == null ? null : PHManager.translate(player, lore), glow, amount, customModelData);
     }
 
     public static ItemStack designItem(ItemStack item, String name, List<String> lore, boolean glow, int amount) {
+        return designItem(item, name, lore, glow, amount, -1);
+    }
+
+    public static ItemStack designItem(ItemStack item, String name, List<String> lore, boolean glow, int amount, int customModelData) {
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) return item;
         if (name != null) itemMeta.setDisplayName(name);
@@ -87,14 +97,17 @@ public class ItemMaker {
             itemMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 0, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
+        if (customModelData >= 0 && !MCVersion.getMCVersion().isLowerThan(MCVersion.V1_14)) {
+            itemMeta.setCustomModelData(customModelData);
+        }
         item.setItemMeta(itemMeta);
         item.setAmount(amount);
-
+        
         return item;
     }
 
     private ItemStack designItem(ItemStack item) {
-        return designItem(item, player, name, lore, glow, getItemAmount());
+        return designItem(item, player, name, lore, glow, getItemAmount(), customModelData);
     }
 
     private int getItemAmount() {
