@@ -1,7 +1,6 @@
 package me.ashenguard.lib.statistics;
 
 import me.ashenguard.agmcore.AGMCore;
-import me.ashenguard.api.placeholder.Placeholder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.event.Listener;
@@ -15,11 +14,9 @@ public class Playtime implements Listener {
     private final static List<String> HOUR = Arrays.asList("_HOUR", "_H");
     private final static List<String> DAYS = Arrays.asList("_DAY", "_D");
 
-    static {
-        new Placeholder(AGMCore.getPHExtension(), s -> s.startsWith("Playtime"), s -> s.substring(8), Playtime::getPlaceholderValue);
-    }
+    public static String getPlaceholderValue(OfflinePlayer player, String value) {
+        AGMCore.getMessenger().Debug("Placeholders", "Placeholder has been requested.", String.format("Player= §6%s", player.getName()), String.format("Placeholder= §6{AGMCore_Playtime%s}", value));
 
-    private static String getPlaceholderValue(OfflinePlayer player, String value) {
         if (value.equalsIgnoreCase("_TOTAL")) {
             long days = Playtime.getPlaytime(player, TimeUnit.DAYS);
             long hours = Playtime.getPlaytime(player, TimeUnit.HOURS);

@@ -7,7 +7,9 @@ import me.ashenguard.api.bstats.Metrics;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.placeholder.PHExtension;
+import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.spigot.SpigotPlugin;
+import me.ashenguard.lib.statistics.Playtime;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -54,7 +56,10 @@ public final class AGMCore extends SpigotPlugin {
     public void onPluginEnable() {
         instance = this;
 
-        if (PHManager.enable) phExtension = new Placeholders();
+        if (PHManager.enable) {
+            phExtension = new Placeholders();
+            phExtension.register();
+        }
         ExtensionLoader extensionLoader = new ExtensionLoader();
         extensions = extensionLoader.registerAllExtensions();
 
@@ -78,6 +83,10 @@ public final class AGMCore extends SpigotPlugin {
     private static class Placeholders extends PHExtension {
         public Placeholders() {
             super(AGMCore.getInstance());
+
+            new Placeholder(this, s -> s.startsWith("Playtime"), s -> s.substring(8), Playtime::getPlaceholderValue);
+
+            AGMCore.getMessenger().Debug("Placeholders", "Placeholders has been registered.");
         }
     }
 }

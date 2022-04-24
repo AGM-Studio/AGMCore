@@ -1,5 +1,6 @@
 package me.ashenguard.api.placeholder;
 
+import me.ashenguard.agmcore.AGMCore;
 import me.ashenguard.api.spigot.SpigotPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -46,6 +47,7 @@ public class PHExtension extends PlaceholderExpansion {
         return plugin.getDescription().getVersion();
     }
     @Override public String onRequest(OfflinePlayer player, @NotNull String identifier) {
+        AGMCore.getMessenger().Info("REQUEST", identifier);
         for (Placeholder placeholder: placeholderList)
             try {
                 if (placeholder.isValid(identifier)) return placeholder.getValue(player, identifier);
