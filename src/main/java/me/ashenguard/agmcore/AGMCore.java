@@ -6,8 +6,8 @@ import me.ashenguard.agmcore.extension.ExtensionLoader;
 import me.ashenguard.api.bstats.Metrics;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PHManager;
+import me.ashenguard.api.placeholder.PHExtension;
 import me.ashenguard.api.spigot.SpigotPlugin;
-import me.ashenguard.lib.statistics.Playtime;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -18,14 +18,16 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public final class AGMCore extends SpigotPlugin {
     private static AGMCore instance;
+    private static PHExtension phExtension;
+
     public static AGMCore getInstance() {
         return instance;
     }
     public static Messenger getMessenger() {
         return instance.messenger;
     }
-    public static Playtime getPlaytimeManager() {
-        return instance.playtimeManager;
+    public static PHExtension getPHExtension() {
+        return phExtension;
     }
 
     @Override
@@ -47,13 +49,12 @@ public final class AGMCore extends SpigotPlugin {
     public HashMap<String, CoreExtension> getExtensions() {
         return new HashMap<>(extensions);
     }
-    private Playtime playtimeManager;
 
     @Override
     public void onPluginEnable() {
         instance = this;
 
-        if (PHManager.enable) new Placeholders();
+        if (PHManager.enable) phExtension = new Placeholders();
         ExtensionLoader extensionLoader = new ExtensionLoader();
         extensions = extensionLoader.registerAllExtensions();
 
@@ -72,5 +73,11 @@ public final class AGMCore extends SpigotPlugin {
         for (CoreExtension extension: extensions.values()) extension.onDisable();
         AGMEvents.deactivateDayCycleEvent(true);
         messenger.Info("Plugin has been disabled");
+    }
+
+    private static class Placeholders extends PHExtension {
+        public Placeholders() {
+            super(AGMCore.getInstance());
+        }
     }
 }
