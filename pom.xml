@@ -20,6 +20,10 @@
             <id>maven-snapshots</id>
             <url>https://repository.apache.org/content/repositories/snapshots/</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>maven-shade-plugin</id>
+            <url>https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin</url>
+        </pluginRepository>
     </pluginRepositories>
 
     <build>
@@ -54,7 +58,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0-SNAPSHOT</version>
+                <version>3.3.0</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
