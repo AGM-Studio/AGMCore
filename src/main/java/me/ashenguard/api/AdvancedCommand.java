@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 @SuppressWarnings({"SameReturnValue", "unused", "ConstantConditions"})
 public abstract class AdvancedCommand implements CommandExecutor, TabCompleter {
@@ -39,12 +40,17 @@ public abstract class AdvancedCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
-        if (command.getName().equalsIgnoreCase(name)) {
-            if (playerOnly && playerOnlyCondition(sender, command, label, args))
-                if (sender instanceof Player) run(sender, command, label, args);
-                else plugin.messenger.response(sender, "§cError:§r This command can be executed by a player");
-            else run(sender, command, label, args);
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        try {
+            if (command.getName().equalsIgnoreCase(name)) {
+                if (playerOnly && playerOnlyCondition(sender, command, label, args))
+                    if (sender instanceof Player) run(sender, command, label, args);
+                    else plugin.messenger.response(sender, "§cError:§r This command can be executed by a player");
+                else run(sender, command, label, args);
+            }
+        } catch (Throwable throwable) {
+            plugin.getLogger().log(Level.WARNING, String.format("Command %s for %s generated an exception", this.name, plugin.getDescription().getFullName()), throwable);
+            plugin.messenger.response(sender, "§cWhile handling your request an unexpected error happened...§r");
         }
         return true;
     }

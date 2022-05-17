@@ -272,7 +272,8 @@ public class Messenger {
     }
 
     public static class Logger extends PluginLogger {
-        private static final Pattern TASK_PATTERN = Pattern.compile("^Task #(\\d+) for (.*) generated an exception$");
+        private static final Pattern TASK_PATTERN = Pattern.compile("^Task #(\\d+) for (.*?) generated an exception$");
+        private static final Pattern COMMAND_PATTERN = Pattern.compile("^Command (.*?) for (.*?) generated an exception$");
 
         public static void override(SpigotPlugin plugin) {
             try {
@@ -293,26 +294,52 @@ public class Messenger {
         }
 
         private final Messenger messenger;
-        private final Map<String, Integer> handledTaskExceptions = new HashMap<>();
+        private final Map<String, Integer> handledExceptions = new HashMap<>();
+
+        private boolean handleTask(LogRecord logRecord, Throwable throwable) {
+            Matcher matcher = TASK_PATTERN.matcher(logRecord.getMessage());
+            if (matcher.find()) {
+                int task = Integer.parseInt(matcher.group(1));
+                String plugin = matcher.group(2);
+
+                String pair = String.format("%s-%d", throwable.getClass().getName(), task);
+                if (handledExceptions.containsKey(pair)) {
+                    int file = handledExceptions.get(pair);
+                    messenger.warning(String.format("Task #%d for %s generated \"§c%s_%d.warn§r\" again!", task, plugin, throwable.getClass().getSimpleName(), file));
+                } else {
+                    int file = messenger.handleException(logRecord.getMessage(), throwable, throwable.getClass().getSimpleName());
+                    handledExceptions.put(pair, file);
+                }
+                return true;
+            }
+            return false;
+        }
+        private boolean handleCommand(LogRecord logRecord, Throwable throwable) {
+            Matcher matcher = COMMAND_PATTERN.matcher(logRecord.getMessage());
+            if (matcher.find()) {
+                String command = matcher.group(1);
+                String plugin = matcher.group(2);
+
+                String pair = String.format("%s-%s", throwable.getClass().getName(), command);
+                if (handledExceptions.containsKey(pair)) {
+                    int file = handledExceptions.get(pair);
+                    messenger.warning(String.format("Command %s for %s generated \"§c%s_%d.warn§r\" again!", command, plugin, throwable.getClass().getSimpleName(), file));
+                } else {
+                    int file = messenger.handleException(logRecord.getMessage(), throwable, throwable.getClass().getSimpleName());
+                    handledExceptions.put(pair, file);
+                }
+                return true;
+            }
+            return false;
+        }
+
 
         @Override public void log(@NotNull LogRecord logRecord) {
             if (logRecord.getThrown() != null) {
                 Throwable throwable = logRecord.getThrown();
-                Matcher matcher = TASK_PATTERN.matcher(logRecord.getMessage());
-                if (matcher.find()) {
-                    int task = Integer.parseInt(matcher.group(1));
-                    String plugin = matcher.group(2);
 
-                    String pair = String.format("%s-%d", throwable.getClass().getName(), task);
-                    if (handledTaskExceptions.containsKey(pair)) {
-                        int file = handledTaskExceptions.get(pair);
-                        messenger.warning(String.format("Task #%d for %s generated a duplicated exception (again!), Previous file saved as \"§c%s_%d.warn\"", task, plugin, throwable.getClass().getSimpleName(), file));
-                    } else {
-                        int file = messenger.handleException(logRecord.getMessage(), throwable, throwable.getClass().getSimpleName());
-                        handledTaskExceptions.put(pair, file);
-                    }
-                    return;
-                }
+                if (handleTask(logRecord, throwable)) return;
+                if (handleCommand(logRecord, throwable)) return;
 
                 messenger.handleException(logRecord.getMessage(), throwable, throwable.getClass().getSimpleName());
                 return;

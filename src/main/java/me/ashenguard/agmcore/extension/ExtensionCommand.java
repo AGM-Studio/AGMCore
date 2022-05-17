@@ -16,19 +16,36 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public abstract class ExtensionCommand extends BukkitCommand {
     protected final AGMCore core = AGMCore.getInstance();
 
+    protected final String name;
+
     protected ExtensionCommand(String name, String description, String usageMessage, List<String> aliases) {
         super(name, description, usageMessage, aliases);
+        this.name = name;
     }
 
     public PluginCommand getCommand() {
         if (isRegistered()) return Bukkit.getPluginCommand(getName());
         return null;
     }
+
+    @Override
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+        try {
+            return run(sender, commandLabel, args);
+        } catch (Throwable throwable) {
+            core.getLogger().log(Level.WARNING, String.format("Command %s for %s generated an exception", this.name, core.getDescription().getFullName()), throwable);
+            core.messenger.response(sender, "§cWhile handling your request an unexpected error happened...§r");
+            return true;
+        }
+    }
+
+    public abstract boolean run(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args);
 
     public boolean register() {
         try {
