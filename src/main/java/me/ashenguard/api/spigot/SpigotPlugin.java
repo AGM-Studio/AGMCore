@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 @SuppressWarnings({"CanBeFinal", "unused"})
 public abstract class SpigotPlugin extends JavaPlugin implements Listener {
@@ -105,7 +106,11 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
         }
 
         getServer().getPluginManager().registerEvents(this, this);
-        onPluginEnable();
+        try {
+            onPluginEnable();
+        } catch (Throwable throwable) {
+            getLogger().log(Level.WARNING, "Error occurred while enabling plugin (Is it up to date?)", throwable);
+        }
 
         if (!Bukkit.getPluginManager().isPluginEnabled(this)) return;
 
@@ -120,7 +125,11 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
      */
     @Override
     public void onDisable() {
-        onPluginDisable();
+        try {
+            onPluginDisable();
+        } catch (Throwable throwable) {
+            getLogger().log(Level.WARNING, "Error occurred while disabling plugin", throwable);
+        }
 
         messenger.Info("The plugin is now disabled.");
     }

@@ -212,16 +212,48 @@ public class Messenger {
      * A number will be added to the end to avoid overwriting.
      */
     public void handleException(Throwable exception, File exceptionFolder, String filename) {
+        handleException("An unexpected error occurred", exception, exceptionFolder, filename);
+    }
+
+    /**
+     * A method that will save the exception in the default folder with default "Exception" name.
+     * A number will be added to the end to avoid overwriting.
+     */
+    public void handleException(String message, Throwable throwable) {
+        handleException(message, throwable, exceptionFolder, "Exception");
+    }
+
+    /**
+     * A method that will save the exception in the defined folder with default "Exception" name. If given file is not a directory default folder will be used.
+     * A number will be added to the end to avoid overwriting.
+     */
+    public void handleException(String message, Throwable throwable, File exceptionFolder) {
+        handleException(message, throwable, exceptionFolder, "Exception");
+    }
+
+    /**
+     * A method that will save the exception in the default folder with defined name.
+     * A number will be added to the end to avoid overwriting.
+     */
+    public void handleException(String message, Throwable throwable, String filename) {
+        handleException(message, throwable, exceptionFolder, filename);
+    }
+
+    /**
+     * A method that will save the exception in the defined folder with defined name. If given file is not a directory default folder will be used.
+     * A number will be added to the end to avoid overwriting.
+     */
+    public void handleException(String message, Throwable exception, File exceptionFolder, String filename) {
         if (!exceptionFolder.isDirectory()) exceptionFolder = this.exceptionFolder;
         int count = 1;
         File file = new File(exceptionFolder, String.format("%s_1.warn", filename));
         while (file.exists()) file = new File(exceptionFolder, String.format("%s_%d.warn", filename, ++count));
         try {
             PrintStream ps = new PrintStream(file); exception.printStackTrace(ps); ps.close();
-            Warning(String.format("An error occurred and was saved as \"§c%s_%d.warn§r\"", filename, count));
-            if (!exceptionFolder.equals(this.exceptionFolder)) Warning("Said warning has been saved in following folder", exceptionFolder.getAbsolutePath());
+            Warning(String.format("%s and was saved as \"§c%s_%d.warn§r\"", message, filename, count));
+            if (!exceptionFolder.equals(this.exceptionFolder)) Warning("Mentioned error has been saved in following folder", exceptionFolder.getAbsolutePath());
         } catch (Exception saveException) {
-            Warning(String.format("An error occurred and was unable to save it due: %s", saveException.getMessage()));
+            Warning(String.format("%s and was unable to save it due: %s", message, saveException.getMessage()));
             exception.printStackTrace();
         }
     }
@@ -249,7 +281,8 @@ public class Messenger {
 
         @Override public void log(@NotNull LogRecord logRecord) {
             if (logRecord.getThrown() != null) {
-                messenger.handleException(logRecord.getThrown());
+                Throwable throwable = logRecord.getThrown();
+                messenger.handleException(logRecord.getMessage(), throwable, throwable.getClass().getSimpleName());
                 return;
             }
 
