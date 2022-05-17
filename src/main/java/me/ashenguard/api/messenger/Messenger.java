@@ -19,8 +19,10 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Messenger {
     public final SpigotPlugin plugin;
     public final File exceptionFolder;
@@ -186,80 +188,91 @@ public class Messenger {
     /**
      * A method that will save the exception in the default folder with default "Exception" name.
      * A number will be added to the end to avoid overwriting.
+     * @return the number added to file name
      */
-    public void handleException(Throwable throwable) {
-        handleException(throwable, exceptionFolder, "Exception");
+    public int handleException(Throwable throwable) {
+        return handleException(throwable, exceptionFolder, "Exception");
     }
 
     /**
      * A method that will save the exception in the defined folder with default "Exception" name. If given file is not a directory default folder will be used.
      * A number will be added to the end to avoid overwriting.
+     * @return the number added to file name
      */
-    public void handleException(Throwable throwable, File exceptionFolder) {
-        handleException(throwable, exceptionFolder, "Exception");
+    public int handleException(Throwable throwable, File exceptionFolder) {
+        return handleException(throwable, exceptionFolder, "Exception");
     }
 
     /**
      * A method that will save the exception in the default folder with defined name.
      * A number will be added to the end to avoid overwriting.
+     * @return the number added to file name
      */
-    public void handleException(Throwable throwable, String filename) {
-        handleException(throwable, exceptionFolder, filename);
+    public int handleException(Throwable throwable, String filename) {
+        return handleException(throwable, exceptionFolder, filename);
     }
 
     /**
      * A method that will save the exception in the defined folder with defined name. If given file is not a directory default folder will be used.
      * A number will be added to the end to avoid overwriting.
+     * @return the number added to file name
      */
-    public void handleException(Throwable exception, File exceptionFolder, String filename) {
-        handleException("An unexpected error occurred", exception, exceptionFolder, filename);
+    public int handleException(Throwable exception, File exceptionFolder, String filename) {
+        return handleException("An unexpected error occurred", exception, exceptionFolder, filename);
     }
 
     /**
      * A method that will save the exception in the default folder with default "Exception" name.
      * A number will be added to the end to avoid overwriting.
+     * @return the number added to file name
      */
-    public void handleException(String message, Throwable throwable) {
-        handleException(message, throwable, exceptionFolder, "Exception");
+    public int handleException(String message, Throwable throwable) {
+        return handleException(message, throwable, exceptionFolder, "Exception");
     }
 
     /**
      * A method that will save the exception in the defined folder with default "Exception" name. If given file is not a directory default folder will be used.
      * A number will be added to the end to avoid overwriting.
+     * @return the number added to file name
      */
-    public void handleException(String message, Throwable throwable, File exceptionFolder) {
-        handleException(message, throwable, exceptionFolder, "Exception");
+    public int handleException(String message, Throwable throwable, File exceptionFolder) {
+        return handleException(message, throwable, exceptionFolder, "Exception");
     }
 
     /**
      * A method that will save the exception in the default folder with defined name.
      * A number will be added to the end to avoid overwriting.
+     * @return the number added to file name
      */
-    public void handleException(String message, Throwable throwable, String filename) {
-        handleException(message, throwable, exceptionFolder, filename);
+    public int handleException(String message, Throwable throwable, String filename) {
+        return handleException(message, throwable, exceptionFolder, filename);
     }
 
     /**
      * A method that will save the exception in the defined folder with defined name. If given file is not a directory default folder will be used.
      * A number will be added to the end to avoid overwriting.
+     * @return the number added to file name
      */
-    public void handleException(String message, Throwable exception, File exceptionFolder, String filename) {
-        if (!exceptionFolder.isDirectory()) exceptionFolder = this.exceptionFolder;
-        int count = 1;
-        File file = new File(exceptionFolder, String.format("%s_1.warn", filename));
-        while (file.exists()) file = new File(exceptionFolder, String.format("%s_%d.warn", filename, ++count));
+    public int handleException(String message, Throwable exception, File exceptionFolder, String filename) {
         try {
+            if (!exceptionFolder.isDirectory()) exceptionFolder = this.exceptionFolder;
+            int count = 1;
+            File file = new File(exceptionFolder, String.format("%s_1.warn", filename));
+            while (file.exists()) file = new File(exceptionFolder, String.format("%s_%d.warn", filename, ++count));
+
             PrintStream ps = new PrintStream(file); exception.printStackTrace(ps); ps.close();
             Warning(String.format("%s and was saved as \"§c%s_%d.warn§r\"", message, filename, count));
             if (!exceptionFolder.equals(this.exceptionFolder)) Warning("Mentioned error has been saved in following folder", exceptionFolder.getAbsolutePath());
+            return count;
         } catch (Exception saveException) {
             Warning(String.format("%s and was unable to save it due: %s", message, saveException.getMessage()));
             exception.printStackTrace();
+            return -1;
         }
     }
 
     public static class Logger extends PluginLogger {
-        private final Messenger messenger;
+        private static final Pattern TASK_PATTERN = Pattern.compile("^Task #(\\d+) for (.*) generated an exception$");
 
         public static void override(SpigotPlugin plugin) {
             try {
@@ -279,9 +292,28 @@ public class Messenger {
             this.messenger = messenger;
         }
 
+        private final Messenger messenger;
+        private final Map<String, Integer> handledTaskExceptions = new HashMap<>();
+
         @Override public void log(@NotNull LogRecord logRecord) {
             if (logRecord.getThrown() != null) {
                 Throwable throwable = logRecord.getThrown();
+                Matcher matcher = TASK_PATTERN.matcher(logRecord.getMessage());
+                if (matcher.find()) {
+                    int task = Integer.parseInt(matcher.group(1));
+                    String plugin = matcher.group(2);
+
+                    String pair = String.format("%s-%d", throwable.getClass().getName(), task);
+                    if (handledTaskExceptions.containsKey(pair)) {
+                        int file = handledTaskExceptions.get(pair);
+                        messenger.warning(String.format("Task #%d for %s generated a duplicated exception (again!), Previous file saved as \"§c%s_%d.warn\"", task, plugin, throwable.getClass().getSimpleName(), file));
+                    } else {
+                        int file = messenger.handleException(logRecord.getMessage(), throwable, throwable.getClass().getSimpleName());
+                        handledTaskExceptions.put(pair, file);
+                    }
+                    return;
+                }
+
                 messenger.handleException(logRecord.getMessage(), throwable, throwable.getClass().getSimpleName());
                 return;
             }
