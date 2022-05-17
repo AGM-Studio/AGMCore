@@ -9,11 +9,16 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginLogger;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 @SuppressWarnings("unused")
 public class Messenger {
@@ -218,6 +223,39 @@ public class Messenger {
         } catch (Exception saveException) {
             Warning(String.format("An error occurred and was unable to save it due: %s", saveException.getMessage()));
             exception.printStackTrace();
+        }
+    }
+
+    public static class Logger extends PluginLogger {
+        private final Messenger messenger;
+
+        public static void override(SpigotPlugin plugin) {
+            try {
+                Class<?> clazz = plugin.getClass();
+                while (clazz != JavaPlugin.class) clazz = clazz.getSuperclass();
+
+                Field field = clazz.getDeclaredField("logger");
+                field.setAccessible(true);
+                field.set(plugin, new Messenger.Logger(plugin, plugin.messenger));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+
+        public Logger(@NotNull Plugin context, @NotNull Messenger messenger) {
+            super(context);
+            this.messenger = messenger;
+        }
+
+        @Override public void log(@NotNull LogRecord logRecord) {
+            if (logRecord.getThrown() != null) {
+                messenger.handleException(logRecord.getThrown());
+                return;
+            }
+
+            if (Level.WARNING.equals(logRecord.getLevel())) messenger.warning(logRecord.getMessage());
+            else if (Level.INFO.equals(logRecord.getLevel())) messenger.info(logRecord.getMessage());
+            else super.log(logRecord);
         }
     }
 }

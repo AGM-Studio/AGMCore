@@ -48,11 +48,21 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
     /**
      * The messenger of the plugin with built-in message formatting.
      */
-    public final Messenger messenger = new Messenger(this);
+    public final Messenger messenger;
     /**
      * The Bstats metrics, Will use the value returned by {@link #getBStatsID()}
      */
     public final Metrics metrics = new Metrics(this, getBStatsID());
+
+    /**
+     * With this initializer, We try to override several defaults including, PluginLoader with the messenger.
+     */
+    public SpigotPlugin() {
+        super();
+
+        this.messenger = new Messenger(this);
+        Messenger.Logger.override(this);
+    }
 
     /**
      * The replace of {@link JavaPlugin#onEnable()} override
