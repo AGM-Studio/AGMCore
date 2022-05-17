@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum MCVersion {
+    V1_19("1.19"),
     V1_18("1.18"),
     V1_17("1.17"),
     V1_16("1.16"),
