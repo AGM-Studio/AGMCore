@@ -191,7 +191,7 @@ public class Messenger {
      * @return the number added to file name
      */
     public int handleException(Throwable throwable) {
-        return handleException(throwable, exceptionFolder, "Exception");
+        return handleException(throwable, exceptionFolder, throwable.getClass().getSimpleName());
     }
 
     /**
@@ -200,7 +200,7 @@ public class Messenger {
      * @return the number added to file name
      */
     public int handleException(Throwable throwable, File exceptionFolder) {
-        return handleException(throwable, exceptionFolder, "Exception");
+        return handleException(throwable, exceptionFolder, throwable.getClass().getSimpleName());
     }
 
     /**
@@ -227,7 +227,7 @@ public class Messenger {
      * @return the number added to file name
      */
     public int handleException(String message, Throwable throwable) {
-        return handleException(message, throwable, exceptionFolder, "Exception");
+        return handleException(message, throwable, exceptionFolder, throwable.getClass().getSimpleName());
     }
 
     /**
@@ -236,7 +236,7 @@ public class Messenger {
      * @return the number added to file name
      */
     public int handleException(String message, Throwable throwable, File exceptionFolder) {
-        return handleException(message, throwable, exceptionFolder, "Exception");
+        return handleException(message, throwable, exceptionFolder, throwable.getClass().getSimpleName());
     }
 
     /**
