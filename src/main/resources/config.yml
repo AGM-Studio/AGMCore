@@ -22,6 +22,9 @@ Prefix: AGMCore
 Check:
   PluginUpdates: true
 
+GUIUpdate: 4
+PreloadGUI: true
+
 Debug:
   Enable: false
   General: true
