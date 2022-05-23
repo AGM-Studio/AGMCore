@@ -4,6 +4,8 @@ import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.ashenguard.agmcore.extension.CoreExtension;
 import me.ashenguard.agmcore.extension.ExtensionLoader;
 import me.ashenguard.api.bstats.Metrics;
+import me.ashenguard.api.gui.GUIManager;
+import me.ashenguard.api.itemstack.ItemLibrary;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.placeholder.PHExtension;
@@ -21,6 +23,8 @@ import java.util.Map;
 public final class AGMCore extends SpigotPlugin {
     private static AGMCore instance;
     private static PHExtension phExtension;
+    private static GUIManager guiManager;
+    private static ItemLibrary itemLibrary;
 
     public static AGMCore getInstance() {
         return instance;
@@ -30,6 +34,12 @@ public final class AGMCore extends SpigotPlugin {
     }
     public static PHExtension getPHExtension() {
         return phExtension;
+    }
+    public static GUIManager getGUIManager() {
+        return guiManager;
+    }
+    public static ItemLibrary getItemLibrary() {
+        return itemLibrary;
     }
 
     @Override
@@ -56,6 +66,8 @@ public final class AGMCore extends SpigotPlugin {
     public void onPluginEnable() {
         instance = this;
 
+        guiManager = new GUIManager();
+        itemLibrary = new ItemLibrary();
         if (PHManager.enable) {
             phExtension = new Placeholders();
             phExtension.register();
@@ -77,7 +89,6 @@ public final class AGMCore extends SpigotPlugin {
     public void onPluginDisable() {
         for (CoreExtension extension: extensions.values()) extension.onDisable();
         AGMEvents.deactivateDayCycleEvent(true);
-        messenger.Info("Plugin has been disabled");
     }
 
     private static class Placeholders extends PHExtension {
