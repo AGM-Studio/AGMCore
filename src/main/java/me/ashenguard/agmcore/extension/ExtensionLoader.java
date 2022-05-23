@@ -46,9 +46,9 @@ public class ExtensionLoader {
                 MESSENGER.Debug("Extensions", "Found an extension, Registration has been started", "Filename= §6" + fileName);
                 CoreExtension extension = registerExtension(fileName);
                 list.put(extension.getName(), extension);
-            } catch (Exception exception) {
+            } catch (Throwable throwable) {
                 MESSENGER.Warning("Unable to register extension named \"" + fileName + "\"");
-                MESSENGER.handleException(exception);
+                MESSENGER.handleException(throwable);
             }
         return list;
     }
