@@ -141,7 +141,9 @@ public abstract class GUIInventory {
         AGMCore.getMessenger().Debug("GUI", "GUI inventory closed", "Player= §6" + player.getName());
 
         // Due packets and pings, Inventory might not close with a simple close call...
-        Bukkit.getScheduler().runTask(AGMCore.getInstance(), player::closeInventory);
+        Bukkit.getScheduler().runTaskLater(AGMCore.getInstance(), () -> {
+            if (GUI_MANAGER.getGUIInventory(player) == null) player.closeInventory();
+        }, 1);
     }
 
     public void design() {
