@@ -64,7 +64,7 @@ public abstract class GUIInventory {
             else return null;
         }
 
-        public void loadLocalItems(Configuration config) {
+        protected void loadLocalItems(Configuration config) {
             ConfigurationSection section = config.getConfigurationSection("Items");
             if (section == null) return;
 
@@ -77,7 +77,7 @@ public abstract class GUIInventory {
         }
 
 
-        private void loadSlotMap(GUIInventory inventory, Configuration config) {
+        protected void loadSlotMap(GUIInventory inventory, Configuration config) {
             ConfigurationSection section = config.getConfigurationSection("Slots");
             NullValue.check("Slot section", section);
 
@@ -101,8 +101,8 @@ public abstract class GUIInventory {
         }
     }
 
-    private final Player player;
-    private final GUIData data;
+    protected final Player player;
+    protected final GUIData data;
 
     protected final Inventory inventory;
 
