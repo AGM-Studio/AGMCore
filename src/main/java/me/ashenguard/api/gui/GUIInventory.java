@@ -29,6 +29,14 @@ public abstract class GUIInventory {
     private static final Pattern SLOT_OFFSET_PATTERN = Pattern.compile("^(\\d+)-(\\d+)$");
     private static final Pattern SLOT_PATTERN = Pattern.compile("^(\\d+)$");
 
+    private static Pair<Integer, Integer> getSlotAndOffset(String string) {
+        Matcher SOM = SLOT_OFFSET_PATTERN.matcher(string);
+        Matcher SM = SLOT_PATTERN.matcher(string);
+        if (SOM.find()) return new Pair<>(Integer.parseInt(SOM.group(1)), Integer.parseInt(SOM.group(2)));
+        else if (SM.find()) return new Pair<>(Integer.parseInt(SM.group(1)), 0);
+        else return null;
+    }
+
     protected static class GUIData {
         protected final String TITLE;
         protected final int SIZE;
@@ -56,14 +64,6 @@ public abstract class GUIInventory {
             return new Pair<>(AGMCore.getItemLibrary().getNotNullItem(key), count);
         }
 
-        private static Pair<Integer, Integer> getSlotAndOffset(String string) {
-            Matcher SOM = SLOT_OFFSET_PATTERN.matcher(string);
-            Matcher SM = SLOT_PATTERN.matcher(string);
-            if (SOM.find()) return new Pair<>(Integer.parseInt(SOM.group(1)), Integer.parseInt(SOM.group(2)));
-            else if (SM.find()) return new Pair<>(Integer.parseInt(SM.group(1)), 0);
-            else return null;
-        }
-
         protected void loadLocalItems(Configuration config) {
             ConfigurationSection section = config.getConfigurationSection("Items");
             if (section == null) return;
@@ -75,7 +75,6 @@ public abstract class GUIInventory {
                 }
             }
         }
-
 
         protected void loadSlotMap(GUIInventory inventory, Configuration config) {
             ConfigurationSection section = config.getConfigurationSection("Slots");
@@ -108,25 +107,15 @@ public abstract class GUIInventory {
 
     protected GUIInventory(Player player, Configuration config) {
         this.player = player;
-        this.data = getData(config);
+        this.data = new GUIData(config.getString("Title", "AGM Inventory"), config.getInt("Size", 6) * 9);
 
         this.inventory = Bukkit.createInventory(player, getSize(), getTitle());
-    }
-    
-    protected GUIInventory(Player player, GUIData data) {
-        this.player = player;
-        this.data = data;
 
-        this.inventory = Bukkit.createInventory(player, getSize(), getTitle());
+        this.data.loadLocalItems(config);
+        this.data.loadSlotMap(this, config);
     }
 
     protected abstract Function<InventoryClickEvent, Boolean> getSlotActionByKey(String key);
-    protected GUIData getData(Configuration config) {
-        GUIData data = new GUIData(config.getString("Title", "AGM Inventory"), config.getInt("Size", 6) * 9);
-        data.loadLocalItems(config);
-        data.loadSlotMap(this, config);
-        return data;
-    }
 
     public void show() {
         design();
