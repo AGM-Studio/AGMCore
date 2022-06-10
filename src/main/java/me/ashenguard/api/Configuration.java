@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
@@ -77,5 +78,37 @@ public class Configuration extends YamlConfiguration {
 
     public void saveDefaultConfig() {
         saveDefaultConfig(false);
+    }
+
+    public String getString(Collection<String> paths, String def) {
+        for (String path: paths) if (contains(path)) return getString(path, def);
+        return def;
+    }
+    public String getString(Collection<String> paths) {
+        return getString(paths, null);
+    }
+
+    public int getInt(Collection<String> paths, int def) {
+        for (String path: paths) if (contains(path)) return getInt(path, def);
+        return def;
+    }
+    public int getInt(Collection<String> paths) {
+        return getInt(paths, 0);
+    }
+
+    public double getDouble(Collection<String> paths, double def) {
+        for (String path: paths) if (contains(path)) return getDouble(path, def);
+        return def;
+    }
+    public double getDouble(Collection<String> paths) {
+        return getDouble(paths, 0);
+    }
+
+    public boolean getBoolean(Collection<String> paths, boolean def) {
+        for (String path: paths) if (contains(path)) return getBoolean(path, def);
+        return def;
+    }
+    public boolean getBoolean(Collection<String> paths) {
+        return getBoolean(paths, false);
     }
 }
