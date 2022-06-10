@@ -49,6 +49,14 @@ public abstract class GUIInventory {
         protected final Map<String, AdvancedItemStack> LOCAL_ITEMS = new HashMap<>();
         protected final Map<Integer, GUIInventorySlot> SLOT_MAP = new HashMap<>();
 
+        public void setSlot(int index, GUIInventorySlot slot) {
+            if (slot == null) SLOT_MAP.remove(index);
+            else SLOT_MAP.put(index, slot);
+        }
+        public GUIInventorySlot getSlot(int index) {
+            return SLOT_MAP.getOrDefault(index, null);
+        }
+
         protected @NotNull Pair<AdvancedItemStack, Integer> getItem(String key) {
             int count = 1;
             Matcher MIM = MULTI_ITEM_PATTERN.matcher(key);
@@ -140,8 +148,12 @@ public abstract class GUIInventory {
         for (GUIInventorySlot slot : data.SLOT_MAP.values()) slot.update(this, tick);
     }
 
+
+    public void setSlot(int index, GUIInventorySlot slot) {
+        this.data.setSlot(index, slot);
+    }
     public GUIInventorySlot getSlot(int index) {
-        return data.SLOT_MAP.getOrDefault(index, null);
+        return this.data.getSlot(index);
     }
 
     public Player getPlayer() {
