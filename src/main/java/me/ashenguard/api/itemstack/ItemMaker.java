@@ -1,7 +1,7 @@
 package me.ashenguard.api.itemstack;
 
 import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
-import me.ashenguard.api.messenger.PHManager;
+import me.ashenguard.api.messenger.PlaceholderManager;
 import me.ashenguard.api.versions.MCVersion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,7 +19,7 @@ public class ItemMaker {
         return designItem(item, player, name, lore, glow, amount, -1);
     }
     public static ItemStack designItem(ItemStack item, OfflinePlayer player, String name, List<String> lore, boolean glow, int amount, int customModelData) {
-        return designItem(item, name == null ? null : PHManager.translate(player, name), lore == null ? null : PHManager.translate(player, lore), glow, amount, customModelData);
+        return designItem(item, name == null ? null : PlaceholderManager.translate(player, name), lore == null ? null : PlaceholderManager.translate(player, lore), glow, amount, customModelData);
     }
     public static ItemStack designItem(ItemStack item, String name, List<String> lore, boolean glow, int amount) {
         return designItem(item, name, lore, glow, amount, -1);

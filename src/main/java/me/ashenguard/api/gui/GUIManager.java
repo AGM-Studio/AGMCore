@@ -49,7 +49,8 @@ public class GUIManager implements Listener {
     public GUIManager() {
         registerListeners();
 
-        AGMCore.getInstance().getServer().getScheduler().runTaskTimer(AGMCore.getInstance(), this::updateInventories, RATE, RATE);
+        if (RATE > 0)
+            AGMCore.getInstance().getServer().getScheduler().runTaskTimer(AGMCore.getInstance(), this::updateInventories, RATE, RATE);
 
         AGMCore.getMessenger().Debug("GUI", "§5GUIManager§r has been loaded.");
     }

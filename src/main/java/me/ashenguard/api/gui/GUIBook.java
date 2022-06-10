@@ -2,7 +2,7 @@ package me.ashenguard.api.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import me.ashenguard.agmcore.AGMCore;
-import me.ashenguard.api.messenger.PHManager;
+import me.ashenguard.api.messenger.PlaceholderManager;
 import me.ashenguard.api.versions.MCVersion;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.hover.content.Text;
@@ -31,7 +31,7 @@ public class GUIBook {
         meta.setTitle(title);
         meta.setAuthor(author);
         @NotNull List<BaseComponent[]> componentPages = new ArrayList<>();
-        for (String page: PHManager.translate(player, pages)) componentPages.add(translate(page));
+        for (String page: PlaceholderManager.translate(player, pages)) componentPages.add(translate(page));
         meta.spigot().setPages(componentPages);
 
         book.setItemMeta(meta);

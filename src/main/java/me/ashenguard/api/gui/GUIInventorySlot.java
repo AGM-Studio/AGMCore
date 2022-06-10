@@ -39,6 +39,26 @@ public class GUIInventorySlot {
         return this;
     }
 
+    public GUIInventorySlot addItems(Collection<Pair<PlaceholderItemStack, Integer>> items) {
+        for (Pair<PlaceholderItemStack, Integer> pair: items)
+            this.items.addAll(Collections.nCopies(pair.getValue(), pair.getKey()));
+
+        return this;
+    }
+
+    public GUIInventorySlot addItem(PlaceholderItemStack item, int count) {
+        this.items.addAll(Collections.nCopies(count, item));
+
+        return this;
+    }
+
+    public GUIInventorySlot addItem(PlaceholderItemStack item) {
+        this.items.add(item);
+
+        return this;
+    }
+
+
     public GUIInventorySlot withOffset(int offset) {
         offset = Math.min(this.items.size(), offset);
         Collections.rotate(items, offset);

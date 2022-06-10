@@ -7,7 +7,7 @@ import me.ashenguard.api.bstats.Metrics;
 import me.ashenguard.api.gui.GUIManager;
 import me.ashenguard.api.itemstack.ItemLibrary;
 import me.ashenguard.api.messenger.Messenger;
-import me.ashenguard.api.messenger.PHManager;
+import me.ashenguard.api.messenger.PlaceholderManager;
 import me.ashenguard.api.placeholder.PHExtension;
 import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.spigot.SpigotPlugin;
@@ -68,7 +68,7 @@ public final class AGMCore extends SpigotPlugin {
 
         guiManager = new GUIManager();
         itemLibrary = new ItemLibrary();
-        if (PHManager.enable) {
+        if (PlaceholderManager.enable) {
             phExtension = new Placeholders();
             phExtension.register();
         }

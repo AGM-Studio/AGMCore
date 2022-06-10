@@ -3,7 +3,7 @@ package me.ashenguard.api.gui;
 import me.ashenguard.agmcore.AGMCore;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
-import me.ashenguard.api.messenger.PHManager;
+import me.ashenguard.api.messenger.PlaceholderManager;
 import me.ashenguard.api.utils.Pair;
 import me.ashenguard.exceptions.NullValue;
 import org.bukkit.Bukkit;
@@ -161,7 +161,7 @@ public abstract class GUIInventory {
     }
 
     public String getTitle() {
-        return PHManager.translate(player, data.TITLE);
+        return PlaceholderManager.translate(player, data.TITLE);
     }
 
     public int getSize() {

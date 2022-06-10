@@ -1,7 +1,8 @@
 package me.ashenguard.api.itemstack.placeholder;
 
 import me.ashenguard.api.Configuration;
-import me.ashenguard.api.messenger.PHManager;
+import me.ashenguard.api.messenger.PlaceholderManager;
+import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.utils.SafeCallable;
 import me.ashenguard.api.versions.MCVersion;
 import org.bukkit.Material;
@@ -53,6 +54,8 @@ public abstract class PlaceholderItemStack {
     public final int cmd;
     public final Map<NamespacedKey, Integer> enchants;
 
+    public final List<Placeholder> placeholders = new ArrayList<>();
+
     protected ItemStack basic = null;
 
     public ItemStack getItem() {
@@ -64,8 +67,8 @@ public abstract class PlaceholderItemStack {
         ItemStack item = basic.clone();
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) return item;
-        if (name != null) itemMeta.setDisplayName(PHManager.translate(player, name));
-        if (lore != null && lore.size() > 0) itemMeta.setLore(PHManager.translate(player, lore));
+        if (name != null) itemMeta.setDisplayName(PlaceholderManager.translate(player, name));
+        if (lore != null && lore.size() > 0) itemMeta.setLore(PlaceholderManager.translate(player, lore));
         for (Map.Entry<NamespacedKey, Integer> entry: enchants.entrySet()) {
             Enchantment enchantment = Enchantment.getByKey(entry.getKey());
             if (enchantment != null) itemMeta.addEnchant(enchantment, entry.getValue() < 0 ? enchantment.getMaxLevel() : entry.getValue(), true);
@@ -143,7 +146,6 @@ public abstract class PlaceholderItemStack {
         };
     }
     public static PlaceholderItemStack fromItemStack(ItemStack itemStack) {
-        Map<NamespacedKey, Integer> enchants = new HashMap<>();
         ItemMeta meta = itemStack.getItemMeta();
 
         return new PlaceholderItemStack(meta == null ? null : meta.getDisplayName(), meta == null ? null : meta.getLore(), false, itemStack.getAmount()) {
