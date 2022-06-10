@@ -65,7 +65,7 @@ public abstract class PlaceholderItemStack {
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) return item;
         if (name != null) itemMeta.setDisplayName(PHManager.translate(player, name));
-        if (lore != null) itemMeta.setLore(PHManager.translate(player, lore));
+        if (lore != null && lore.size() > 0) itemMeta.setLore(PHManager.translate(player, lore));
         for (Map.Entry<NamespacedKey, Integer> entry: enchants.entrySet()) {
             Enchantment enchantment = Enchantment.getByKey(entry.getKey());
             if (enchantment != null) itemMeta.addEnchant(enchantment, entry.getValue() < 0 ? enchantment.getMaxLevel() : entry.getValue(), true);
@@ -119,7 +119,14 @@ public abstract class PlaceholderItemStack {
         else if (this instanceof PlaceholderItemStackCH) {
             config.set(key + ".CustomHead", ((PlaceholderItemStackCH) this).texture);
             config.set(key + ".UUID", ((PlaceholderItemStackCH) this).uuid.toString());
-        }
+        } else return;
+
+        if (name != null) config.set(key + ".Name", this.name);
+        if (lore != null && lore.size() > 0) config.set(key + ".Lore", this.lore);
+        if (amount.call() > 1) config.set(key + ".Amount", this.amount);
+        if (glow) config.set(key + ".Glow", true);
+        if (cmd > 0) config.set(key + ".CustomModelData", this.cmd);
+        if (enchants != null && enchants.size() > 0) config.set(key + ".Enchantments", this.enchants.entrySet().stream().map((entry) -> String.format("%s:%d", entry.getKey(), entry.getValue())));
     }
 
     public static @Nullable PlaceholderItemStack fromSection(ConfigurationSection section) {
