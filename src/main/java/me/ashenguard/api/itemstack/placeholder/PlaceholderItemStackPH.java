@@ -1,6 +1,7 @@
-package me.ashenguard.api.itemstack.advanced;
+package me.ashenguard.api.itemstack.placeholder;
 
 import com.cryptomorin.xseries.XMaterial;
+import me.ashenguard.api.Configuration;
 import me.ashenguard.api.utils.SafeCallable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,25 +11,26 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class AdvancedItemStackPH extends AdvancedItemStack {
-    private final String username;
+public class PlaceholderItemStackPH extends PlaceholderItemStack {
+    protected final String username;
 
-    public AdvancedItemStackPH(String username, String name, List<String> lore, boolean glow, SafeCallable<Integer> amount) {
+    public PlaceholderItemStackPH(String username, String name, List<String> lore, boolean glow, SafeCallable<Integer> amount) {
         super(name, lore, glow, amount);
 
         this.username = username;
     }
 
-    public static AdvancedItemStackPH fromSection(ConfigurationSection section) {
-        return new AdvancedItemStackPH(
-                section.getString("Material.Player", section.getString("Material.Value", "self")),
+    public static PlaceholderItemStackPH fromSection(ConfigurationSection section) {
+        return new PlaceholderItemStackPH(
+                Configuration.getString(section, Arrays.asList("PlayerHead", "Material.Player", "Material.Value"), "self"),
                 section.getString("Name", null),
                 section.isList("Lore") ? section.getStringList("Lore") : null,
                 section.getBoolean("Glow", false),
-                AdvancedItemStack.amountFromString(section.getString("Amount"))
+                PlaceholderItemStack.amountFromString(section.getString("Amount"))
         );
     }
 

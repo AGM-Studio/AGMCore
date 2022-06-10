@@ -2,7 +2,7 @@ package me.ashenguard.api.gui;
 
 import me.ashenguard.agmcore.AGMCore;
 import me.ashenguard.api.Configuration;
-import me.ashenguard.api.itemstack.advanced.AdvancedItemStack;
+import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.utils.Pair;
 import me.ashenguard.exceptions.NullValue;
@@ -46,7 +46,7 @@ public abstract class GUIInventory {
             SIZE = size;
         }
 
-        protected final Map<String, AdvancedItemStack> LOCAL_ITEMS = new HashMap<>();
+        protected final Map<String, PlaceholderItemStack> LOCAL_ITEMS = new HashMap<>();
         protected final Map<Integer, GUIInventorySlot> SLOT_MAP = new HashMap<>();
 
         public void setSlot(int index, GUIInventorySlot slot) {
@@ -57,7 +57,7 @@ public abstract class GUIInventory {
             return SLOT_MAP.getOrDefault(index, null);
         }
 
-        protected @NotNull Pair<AdvancedItemStack, Integer> getItem(String key) {
+        protected @NotNull Pair<PlaceholderItemStack, Integer> getItem(String key) {
             int count = 1;
             Matcher MIM = MULTI_ITEM_PATTERN.matcher(key);
             if (MIM.find()) {
@@ -66,7 +66,7 @@ public abstract class GUIInventory {
             }
 
             String local = key.toLowerCase().startsWith("inventory:") ? key.substring(10) : key;
-            AdvancedItemStack item = LOCAL_ITEMS.getOrDefault(local.toLowerCase(), null);
+            PlaceholderItemStack item = LOCAL_ITEMS.getOrDefault(local.toLowerCase(), null);
             if (item != null) return new Pair<>(item, count);
 
             return new Pair<>(AGMCore.getItemLibrary().getNotNullItem(key), count);
@@ -78,7 +78,7 @@ public abstract class GUIInventory {
 
             for (String key : section.getKeys(false)) {
                 if (section.isConfigurationSection(key)) {
-                    AdvancedItemStack item = AdvancedItemStack.fromSection(section.getConfigurationSection(key));
+                    PlaceholderItemStack item = PlaceholderItemStack.fromSection(section.getConfigurationSection(key));
                     if (item != null) LOCAL_ITEMS.put(key.toLowerCase(), item);
                 }
             }

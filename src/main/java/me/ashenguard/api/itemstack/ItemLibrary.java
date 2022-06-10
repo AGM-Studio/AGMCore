@@ -2,7 +2,7 @@ package me.ashenguard.api.itemstack;
 
 import me.ashenguard.agmcore.AGMCore;
 import me.ashenguard.api.Configuration;
-import me.ashenguard.api.itemstack.advanced.AdvancedItemStack;
+import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.spigot.SpigotPlugin;
 import me.ashenguard.exceptions.IllegalFormatException;
 import me.ashenguard.exceptions.PluginNotEnabled;
@@ -21,7 +21,7 @@ import java.util.Set;
 public class ItemLibrary {
     private static final SpigotPlugin CORE = AGMCore.getInstance();
 
-    private final Map<NamespacedKey, AdvancedItemStack> itemMap = new HashMap<>();
+    private final Map<NamespacedKey, PlaceholderItemStack> itemMap = new HashMap<>();
     private final Map<NamespacedKey, NamespacedKey> keyMap = new HashMap<>();
 
     public ItemLibrary() {
@@ -61,7 +61,7 @@ public class ItemLibrary {
         for (String key: keys) {
             try {
                 if (config.isConfigurationSection(key)) {
-                    AdvancedItemStack item = AdvancedItemStack.fromSection(config.getConfigurationSection(key));
+                    PlaceholderItemStack item = PlaceholderItemStack.fromSection(config.getConfigurationSection(key));
                     if (item != null) itemMap.put(new NamespacedKey(filename, key), item);
                 } else if (config.isString(key)) {
                     NamespacedKey namespace = NamespacedKey.fromString(key);
@@ -76,18 +76,18 @@ public class ItemLibrary {
         }
     }
 
-    public @Nullable AdvancedItemStack getItem(String string) {
+    public @Nullable PlaceholderItemStack getItem(String string) {
         return getItem(NamespacedKey.fromString(string));
     }
     @SuppressWarnings("deprecation")
-    public @Nullable AdvancedItemStack getItem(String parent, String key) {
+    public @Nullable PlaceholderItemStack getItem(String parent, String key) {
         return getItem(new NamespacedKey(parent, key));
     }
-    public @Nullable AdvancedItemStack getItem(SpigotPlugin plugin, String key) {
+    public @Nullable PlaceholderItemStack getItem(SpigotPlugin plugin, String key) {
         return getItem(new NamespacedKey(plugin, key));
     }
-    public @Nullable AdvancedItemStack getItem(NamespacedKey key) {
-        AdvancedItemStack item = itemMap.getOrDefault(key, null);
+    public @Nullable PlaceholderItemStack getItem(NamespacedKey key) {
+        PlaceholderItemStack item = itemMap.getOrDefault(key, null);
         if (item != null) return item;
 
         NamespacedKey namespace = keyMap.getOrDefault(key, null);
@@ -96,20 +96,20 @@ public class ItemLibrary {
         return null;
     }
 
-    public @NotNull AdvancedItemStack getNotNullItem(String string) {
-        AdvancedItemStack item = getItem(string);
-        return item == null ? AdvancedItemStack.nullItem() : item;
+    public @NotNull PlaceholderItemStack getNotNullItem(String string) {
+        PlaceholderItemStack item = getItem(string);
+        return item == null ? PlaceholderItemStack.nullItem() : item;
     }
-    public @NotNull AdvancedItemStack getNotNullItem(String parent, String key) {
-        AdvancedItemStack item = getItem(parent, key);
-        return item == null ? AdvancedItemStack.nullItem() : item;
+    public @NotNull PlaceholderItemStack getNotNullItem(String parent, String key) {
+        PlaceholderItemStack item = getItem(parent, key);
+        return item == null ? PlaceholderItemStack.nullItem() : item;
     }
-    public @NotNull AdvancedItemStack getNotNullItem(SpigotPlugin plugin, String key) {
-        AdvancedItemStack item = getItem(plugin, key);
-        return item == null ? AdvancedItemStack.nullItem() : item;
+    public @NotNull PlaceholderItemStack getNotNullItem(SpigotPlugin plugin, String key) {
+        PlaceholderItemStack item = getItem(plugin, key);
+        return item == null ? PlaceholderItemStack.nullItem() : item;
     }
-    public @NotNull AdvancedItemStack getNotNullItem(NamespacedKey key) {
-        AdvancedItemStack item = getItem(key);
-        return item == null ? AdvancedItemStack.nullItem() : item;
+    public @NotNull PlaceholderItemStack getNotNullItem(NamespacedKey key) {
+        PlaceholderItemStack item = getItem(key);
+        return item == null ? PlaceholderItemStack.nullItem() : item;
     }
 }

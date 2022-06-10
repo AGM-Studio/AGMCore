@@ -1,6 +1,6 @@
 package me.ashenguard.api.itemstack;
 
-import me.ashenguard.api.itemstack.advanced.AdvancedItemStack;
+import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.versions.MCVersion;
 import org.bukkit.OfflinePlayer;
@@ -47,7 +47,7 @@ public class ItemMaker {
     }
     */
     public static ItemStack getItemStack(OfflinePlayer player, @NotNull ConfigurationSection section) {
-        AdvancedItemStack item = AdvancedItemStack.fromSection(section);
+        PlaceholderItemStack item = PlaceholderItemStack.fromSection(section);
         return item == null ? null : item.getItem(player);
     }
     public static ItemStack getItemStack(@NotNull ItemStack itemStack, OfflinePlayer player, String name, List<String> lore) {

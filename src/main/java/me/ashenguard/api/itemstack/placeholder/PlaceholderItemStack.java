@@ -1,5 +1,6 @@
-package me.ashenguard.api.itemstack.advanced;
+package me.ashenguard.api.itemstack.placeholder;
 
+import me.ashenguard.api.Configuration;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.utils.SafeCallable;
 import me.ashenguard.api.versions.MCVersion;
@@ -19,9 +20,9 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AdvancedItemStack {
+public abstract class PlaceholderItemStack {
     protected static final ItemStack NULL_ITEM = new ItemStack(Material.STONE);
-    protected static AdvancedItemStack NULL = null;
+    protected static PlaceholderItemStack NULL = null;
 
     protected static final String PLAYER_HEAD = "Player_Head";
     protected static final String CUSTOM_HEAD = "Custom_Head";
@@ -93,7 +94,7 @@ public abstract class AdvancedItemStack {
         }
     }
 
-    protected AdvancedItemStack(String name, List<String> lore, boolean glow, SafeCallable<Integer> amount, int cmd, Map<NamespacedKey, Integer> enchants) {
+    protected PlaceholderItemStack(String name, List<String> lore, boolean glow, SafeCallable<Integer> amount, int cmd, Map<NamespacedKey, Integer> enchants) {
         this.name = name;
         this.lore = lore;
         this.amount = amount;
@@ -102,33 +103,59 @@ public abstract class AdvancedItemStack {
         this.enchants = enchants;
     }
 
-    protected AdvancedItemStack(String name, List<String> lore, boolean glow, SafeCallable<Integer> amount) {
+    protected PlaceholderItemStack(String name, List<String> lore, boolean glow, SafeCallable<Integer> amount) {
         this(name, lore, glow, amount, -1, new HashMap<>());
     }
 
-    public static @Nullable AdvancedItemStack fromSection(ConfigurationSection section) {
+    protected PlaceholderItemStack(String name, List<String> lore, boolean glow, int amount) {
+        this(name, lore, glow, new SafeCallable<>(() -> amount, amount), -1, new HashMap<>());
+    }
+
+    public void save(String key, Configuration config) {
+        if (this instanceof PlaceholderItemStackBare)
+            config.set(key + ".Material", this.getBasicItem().getType().name());
+        else if (this instanceof PlaceholderItemStackPH)
+            config.set(key + ".PlayerHead", ((PlaceholderItemStackPH) this).username);
+        else if (this instanceof PlaceholderItemStackCH) {
+            config.set(key + ".CustomHead", ((PlaceholderItemStackCH) this).texture);
+            config.set(key + ".UUID", ((PlaceholderItemStackCH) this).uuid.toString());
+        }
+    }
+
+    public static @Nullable PlaceholderItemStack fromSection(ConfigurationSection section) {
         if (section == null) return null;
+        if (section.contains("PlayerHead")) return PlaceholderItemStackPH.fromSection(section);
+        if (section.contains("CustomHead")) return PlaceholderItemStackCH.fromSection(section);
+
         String id = section.getString("Material.ID", section.getString("Material", null));
         if (id == null) return null;
         return switch (id.toUpperCase()) {
-            case PLAYER_HEAD -> AdvancedItemStackPH.fromSection(section);
-            case CUSTOM_HEAD -> AdvancedItemStackCH.fromSection(section);
-            default -> AdvancedItemStackBare.fromSection(section);
+            case PLAYER_HEAD -> PlaceholderItemStackPH.fromSection(section);
+            case CUSTOM_HEAD -> PlaceholderItemStackCH.fromSection(section);
+            default -> PlaceholderItemStackBare.fromSection(section);
         };
     }
-    public static @NotNull AdvancedItemStack nullItem() {
-        if (NULL == null) NULL = new AdvancedItemStackBare(Material.STONE);
+    public static PlaceholderItemStack fromItemStack(ItemStack itemStack) {
+        Map<NamespacedKey, Integer> enchants = new HashMap<>();
+        ItemMeta meta = itemStack.getItemMeta();
+
+        return new PlaceholderItemStack(meta == null ? null : meta.getDisplayName(), meta == null ? null : meta.getLore(), false, itemStack.getAmount()) {
+            @Override protected @NotNull ItemStack getBasicItem() {
+                return itemStack.clone();
+            }
+        };
+    }
+    public static @NotNull PlaceholderItemStack nullItem() {
+        if (NULL == null) NULL = new PlaceholderItemStackBare(Material.STONE);
         return NULL;
     }
 
-    private static final List<BiConsumer<ItemStack, AdvancedItemStack>> modifiers = new ArrayList<>();
-
-    private static void applyModifier(ItemStack item, AdvancedItemStack advanced) {
+    private static final List<BiConsumer<ItemStack, PlaceholderItemStack>> modifiers = new ArrayList<>();
+    private static void applyModifier(ItemStack item, PlaceholderItemStack advanced) {
         if (item == null) return;
-        for (BiConsumer<ItemStack, AdvancedItemStack> modifier: modifiers) modifier.accept(item, advanced);
+        for (BiConsumer<ItemStack, PlaceholderItemStack> modifier: modifiers) modifier.accept(item, advanced);
     }
-
-    public static void addModifier(@NotNull BiConsumer<ItemStack, AdvancedItemStack> modifier) {
+    public static void addModifier(@NotNull BiConsumer<ItemStack, PlaceholderItemStack> modifier) {
         modifiers.add(modifier);
     }
 }

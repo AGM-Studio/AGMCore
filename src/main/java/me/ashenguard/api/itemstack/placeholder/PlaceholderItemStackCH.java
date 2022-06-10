@@ -1,8 +1,9 @@
-package me.ashenguard.api.itemstack.advanced;
+package me.ashenguard.api.itemstack.placeholder;
 
 import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.ashenguard.api.Configuration;
 import me.ashenguard.api.utils.SafeCallable;
 import me.ashenguard.api.versions.MCVersion;
 import org.bukkit.Material;
@@ -10,13 +11,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class AdvancedItemStackCH extends AdvancedItemStack {
-    private final String texture;
-    private final UUID uuid;
+public class PlaceholderItemStackCH extends PlaceholderItemStack {
+    protected final String texture;
+    protected final UUID uuid;
 
     private static UUID safeUUIDFromString(String string) {
         try {
@@ -26,21 +28,24 @@ public class AdvancedItemStackCH extends AdvancedItemStack {
         }
     }
 
-    public AdvancedItemStackCH(String texture, UUID uuid, String name, List<String> lore, boolean glow, SafeCallable<Integer> amount) {
+    public PlaceholderItemStackCH(String texture, UUID uuid, String name, List<String> lore, boolean glow, SafeCallable<Integer> amount) {
         super(name, lore, glow, amount);
 
         this.uuid = uuid;
         this.texture = texture;
     }
+    public PlaceholderItemStackCH(String texture, String uuid, String name, List<String> lore, boolean glow, SafeCallable<Integer> amount) {
+        this(texture, safeUUIDFromString(uuid), name, lore, glow, amount);
+    }
     
-    public static AdvancedItemStackCH fromSection(ConfigurationSection section) {
-        return new AdvancedItemStackCH(
-                section.getString("Material.Texture", section.getString("Material.Value", null)),
-                safeUUIDFromString(section.getString("Material.UUID", "")),
+    public static PlaceholderItemStackCH fromSection(ConfigurationSection section) {
+        return new PlaceholderItemStackCH(
+                Configuration.getString(section, Arrays.asList("CustomHead", "Material.Texture", "Material.Value"), null),
+                Configuration.getString(section, Arrays.asList("UUID", "Material.UUID"), ""),
                 section.getString("Name", null),
                 section.isList("Lore") ? section.getStringList("Lore") : null,
                 section.getBoolean("Glow", false),
-                AdvancedItemStack.amountFromString(section.getString("Amount"))
+                PlaceholderItemStack.amountFromString(section.getString("Amount"))
         );
     }
 

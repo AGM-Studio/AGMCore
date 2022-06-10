@@ -1,6 +1,6 @@
 package me.ashenguard.api.gui;
 
-import me.ashenguard.api.itemstack.advanced.AdvancedItemStack;
+import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.utils.Pair;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 @SuppressWarnings("UnusedReturnValue")
 public class GUIInventorySlot {
     private Function<InventoryClickEvent, Boolean> action = null;
-    private final List<AdvancedItemStack> items = new ArrayList<>();
+    private final List<PlaceholderItemStack> items = new ArrayList<>();
 
     public final int slot;
 
@@ -31,9 +31,9 @@ public class GUIInventorySlot {
         return action.apply(event);
     }
 
-    public GUIInventorySlot setItems(Collection<Pair<AdvancedItemStack, Integer>> items) {
+    public GUIInventorySlot setItems(Collection<Pair<PlaceholderItemStack, Integer>> items) {
         if (this.items.size() > 0) this.items.clear();
-        for (Pair<AdvancedItemStack, Integer> pair: items)
+        for (Pair<PlaceholderItemStack, Integer> pair: items)
             this.items.addAll(Collections.nCopies(pair.getValue(), pair.getKey()));
 
         return this;
