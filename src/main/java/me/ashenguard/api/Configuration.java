@@ -2,6 +2,7 @@ package me.ashenguard.api;
 
 import me.ashenguard.api.spigot.SpigotPlugin;
 import me.ashenguard.api.utils.FileUtils;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -110,5 +111,37 @@ public class Configuration extends YamlConfiguration {
     }
     public boolean getBoolean(Collection<String> paths) {
         return getBoolean(paths, false);
+    }
+
+    public static String getString(ConfigurationSection section, Collection<String> paths, String def) {
+        for (String path: paths) if (section.contains(path)) return section.getString(path, def);
+        return def;
+    }
+    public static String getString(ConfigurationSection section, Collection<String> paths) {
+        return getString(section, paths, null);
+    }
+
+    public static int getInt(ConfigurationSection section, Collection<String> paths, int def) {
+        for (String path: paths) if (section.contains(path)) return section.getInt(path, def);
+        return def;
+    }
+    public static int getInt(ConfigurationSection section, Collection<String> paths) {
+        return getInt(section, paths, 0);
+    }
+
+    public static double getDouble(ConfigurationSection section, Collection<String> paths, double def) {
+        for (String path: paths) if (section.contains(path)) return section.getDouble(path, def);
+        return def;
+    }
+    public static double getDouble(ConfigurationSection section, Collection<String> paths) {
+        return getDouble(section, paths, 0);
+    }
+
+    public static boolean getBoolean(ConfigurationSection section, Collection<String> paths, boolean def) {
+        for (String path: paths) if (section.contains(path)) return section.getBoolean(path, def);
+        return def;
+    }
+    public static boolean getBoolean(ConfigurationSection section, Collection<String> paths) {
+        return getBoolean(section, paths, false);
     }
 }
