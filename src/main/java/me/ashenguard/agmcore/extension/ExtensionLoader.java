@@ -16,7 +16,7 @@ public class ExtensionLoader {
     private final static Messenger MESSENGER = CORE.messenger;
 
     private final static File FOLDER = new File(CORE.getDataFolder(), "Extensions");
-    static { if (!FOLDER.exists() && FOLDER.mkdirs()) MESSENGER.Debug("General", "Extension folder wasn't found, A new one created"); }
+    static { if (!FOLDER.exists() && FOLDER.mkdirs()) MESSENGER.debug("General", "Extension folder wasn't found, A new one created"); }
 
     public boolean registerExtension(CoreExtension extension, String filename) {
         if (extension == null) return false;
@@ -25,13 +25,13 @@ public class ExtensionLoader {
         extension.onEnable();
 
 
-        MESSENGER.Debug("Extensions", "Extension registered successfully", "Extension= §6" + extension.getName());
+        MESSENGER.debug("Extensions", "Extension registered successfully", "Extension= §6" + extension.getName());
         return true;
     }
 
     public CoreExtension registerExtension(String fileName) {
         List<Class<?>> subs = FileUtils.getClasses(FOLDER, fileName, CoreExtension.class);
-        MESSENGER.Debug("Extensions", String.format("Found %d subs for the extension", subs != null ? subs.size() : 0));
+        MESSENGER.debug("Extensions", String.format("Found %d subs for the extension", subs != null ? subs.size() : 0));
         if (subs == null || subs.isEmpty()) return null;
 
         CoreExtension extension = createInstance(subs.get(0));
@@ -43,11 +43,11 @@ public class ExtensionLoader {
         HashMap<String, CoreExtension> list = new HashMap<>();
         for (String fileName: Arrays.stream(FOLDER.listFiles()).map(File::getName).filter(name -> name.endsWith(".jar")).collect(Collectors.toList()))
             try {
-                MESSENGER.Debug("Extensions", "Found an extension, Registration has been started", "Filename= §6" + fileName);
+                MESSENGER.debug("Extensions", "Found an extension, Registration has been started", "Filename= §6" + fileName);
                 CoreExtension extension = registerExtension(fileName);
                 list.put(extension.getName(), extension);
             } catch (Throwable throwable) {
-                MESSENGER.Warning("Unable to register extension named \"" + fileName + "\"");
+                MESSENGER.warning("Unable to register extension named \"" + fileName + "\"");
                 MESSENGER.handleException(throwable);
             }
         return list;
@@ -71,7 +71,7 @@ public class ExtensionLoader {
                 }
             }
         } catch (Throwable throwable) {
-            MESSENGER.Warning("Failed to initialize extension from class: " + clazz.getName());
+            MESSENGER.warning("Failed to initialize extension from class: " + clazz.getName());
             MESSENGER.handleException(throwable);
         }
 

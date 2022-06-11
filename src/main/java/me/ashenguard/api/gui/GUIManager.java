@@ -52,7 +52,7 @@ public class GUIManager implements Listener {
         if (RATE > 0)
             AGMCore.getInstance().getServer().getScheduler().runTaskTimer(AGMCore.getInstance(), this::updateInventories, RATE, RATE);
 
-        AGMCore.getMessenger().Debug("GUI", "§5GUIManager§r has been loaded.");
+        AGMCore.getMessenger().debug("GUI", "§5GUIManager§r has been loaded.");
     }
 
     public void registerListeners() {
@@ -92,7 +92,7 @@ public class GUIManager implements Listener {
         GUIInventory guiInventory = getGUIInventory(player);
         if (guiInventory == null || (inventory == null || inventory.getType() == InventoryType.PLAYER)) return;
 
-        AGMCore.getMessenger().Debug("GUI", "Inventory click detected", String.format("Player= §6%s", player.getName()), String.format("Slot= §6%d", event.getSlot()));
+        AGMCore.getMessenger().debug("GUI", "Inventory click detected", String.format("Player= §6%s", player.getName()), String.format("Slot= §6%d", event.getSlot()));
 
         GUIInventorySlot slot = guiInventory.getSlot(event.getSlot());
         if (slot == null || slot.runAction(event)) event.setCancelled(true);

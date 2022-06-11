@@ -94,7 +94,7 @@ public final class AGMCore extends SpigotPlugin {
             new Placeholder(this, s -> s.startsWith("Livetime"), s -> s.substring(8), Livetime::getPlaceholderValue);
             new Placeholder(this, s -> s.startsWith("Waketime"), s -> s.substring(8), Waketime::getPlaceholderValue);
 
-            AGMCore.getMessenger().Debug("Placeholders", "Placeholders has been registered.");
+            AGMCore.getMessenger().debug("Placeholders", "Placeholders has been registered.");
         }
     }
 }

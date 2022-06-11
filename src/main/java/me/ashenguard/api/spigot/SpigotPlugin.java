@@ -100,7 +100,7 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
         for (String name: getRequirements()) {
             Plugin plugin = getServer().getPluginManager().getPlugin(name);
             if (plugin == null || !plugin.isEnabled()) {
-                messenger.Warning("Dependencies are not satisfied. Disabling plugin to stop further issues.", String.format("Missing plugin: %s", name));
+                messenger.warning("Dependencies are not satisfied. Disabling plugin to stop further issues.", String.format("Missing plugin: %s", name));
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
@@ -109,7 +109,7 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
         for (String name: getSoftRequirements()) {
             Plugin plugin = getServer().getPluginManager().getPlugin(name);
             if (plugin == null || !plugin.isEnabled())
-                messenger.Warning("This plugin will work fine without following plugin, But it is recommended to install this plugin as well", String.format("Required plugin: %s", name));
+                messenger.warning("This plugin will work fine without following plugin, But it is recommended to install this plugin as well", String.format("Required plugin: %s", name));
         }
 
         getServer().getPluginManager().registerEvents(this, this);
@@ -121,7 +121,7 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
 
         if (!Bukkit.getPluginManager().isPluginEnabled(this)) return;
 
-        messenger.Info("The plugin was successfully enabled.");
+        messenger.info("The plugin was successfully enabled.");
         messenger.updateNotification(getServer().getConsoleSender());
     }
 
@@ -138,7 +138,7 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
             getLogger().log(Level.WARNING, "Error occurred while disabling plugin", throwable);
         }
 
-        messenger.Info("The plugin is now disabled.");
+        messenger.info("The plugin is now disabled.");
     }
 
     /**
@@ -168,6 +168,8 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
      */
     @EventHandler
     public void onJoinUNEvent(PlayerJoinEvent event) {
-        messenger.updateNotification(event.getPlayer(), updateNotification);
+        if (event.getPlayer().isOp())
+            messenger.updateNotification(event.getPlayer(), updateNotification);
+        messenger.sendCaches(event.getPlayer());
     }
 }

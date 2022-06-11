@@ -45,7 +45,7 @@ public class ItemLibrary {
             loadGUIConfig(file);
         }
 
-        AGMCore.getMessenger().Debug("General", "§dItemLibrary§r has been loaded.");
+        AGMCore.getMessenger().debug("General", "§dItemLibrary§r has been loaded.");
     }
 
     public static void createLibraryFile(SpigotPlugin plugin, String filename, String resource) {

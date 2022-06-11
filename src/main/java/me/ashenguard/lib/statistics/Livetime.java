@@ -36,7 +36,7 @@ public class Livetime {
      */
     @SuppressWarnings("DuplicatedCode")
     public static String getPlaceholderValue(OfflinePlayer player, String value) {
-        AGMCore.getMessenger().Debug("Placeholders", "Placeholder has been requested.", String.format("Player= §6%s", player.getName()), String.format("Placeholder= §6{AGMCore_Livetime%s}", value));
+        AGMCore.getMessenger().debug("Placeholders", "Placeholder has been requested.", String.format("Player= §6%s", player.getName()), String.format("Placeholder= §6{AGMCore_Livetime%s}", value));
 
         if (value == null || value.length() < 1) return String.valueOf(getLivetime(player));
         else if (value.equalsIgnoreCase("_TOTAL")) {

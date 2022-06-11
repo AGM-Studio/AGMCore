@@ -36,7 +36,7 @@ public abstract class AdvancedListener implements Listener {
             AdvancedListener instance = listener.getDeclaredConstructor().newInstance();
             instance.register(plugin);
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
-            plugin.messenger.Warning(excMessage);
+            plugin.messenger.warning(excMessage);
         }
     }
 }

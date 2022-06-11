@@ -33,13 +33,16 @@ public class Messenger {
     public String prefix;
 
     private final List<String> criticalCache = new ArrayList<>();
+    private final List<String> broadcastPlayersCache = new ArrayList<>();
+    private List<String> broadcastMessageCache = new ArrayList<>();
 
     public Messenger(SpigotPlugin plugin) {
         this.plugin = plugin;
         setup(null);
 
         exceptionFolder = new File(plugin.getDataFolder(), "Exception");
-        if (!exceptionFolder.exists() && exceptionFolder.mkdirs()) Debug("General", "Exception folder wasn't found, A new one created");
+        if (!exceptionFolder.exists() && exceptionFolder.mkdirs())
+            debug("General", "Exception folder wasn't found, A new one created");
     }
 
     /**
@@ -57,7 +60,8 @@ public class Messenger {
         debugs = new HashMap<>();
         if (config != null) {
             ConfigurationSection section = config.getConfigurationSection("Debug");
-            if (section != null) for (String key : section.getKeys(false)) if (!key.equals("Enable")) debugs.put(key, section.getBoolean(key, true));
+            if (section != null) for (String key : section.getKeys(false))
+                if (!key.equals("Enable")) debugs.put(key, section.getBoolean(key, true));
         }
     }
 
@@ -65,46 +69,67 @@ public class Messenger {
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Debug}.
      * It also will check if {@link #debugger} is set to "True" and the type given is enabled.
      */
-    public void Debug(String type, String... messages) {
+    public void debug(String type, String... messages) {
         if (debugger && debugs.getOrDefault(type, true))
             sendMessage(MessageMode.Debug, Bukkit.getConsoleSender(), messages);
     }
-    public void debug(String type, String... messages) {
-        Debug(type, messages);
+
+    /**
+     * @deprecated use {@link #debug(String, String...)}
+     */
+    public void Debug(String type, String... messages) {
+        debug(type, messages);
     }
+
     /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Warning}.
      */
-    public void Critical(String... messages) {
+    public void critical(String... messages) {
         sendMessage(MessageMode.Critical, Bukkit.getConsoleSender(), messages);
     }
-    public void critical(String... messages) {
-        Warning(messages);
+
+    /**
+     * @deprecated use {@link #critical(String...)}
+     */
+    public void Critical(String... messages) {
+        critical(messages);
     }
+
     /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Warning}.
      */
-    public void Warning(String... messages) {
+    public void warning(String... messages) {
         sendMessage(MessageMode.Warning, Bukkit.getConsoleSender(), messages);
     }
-    public void warning(String... messages) {
-        Warning(messages);
+
+    /**
+     * @deprecated use {@link #warning(String...)}
+     */
+    public void Warning(String... messages) {
+        warning(messages);
     }
+
     /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Info}.
      */
-    public void Info(String... messages) {
+    public void info(String... messages) {
         sendMessage(MessageMode.Info, Bukkit.getConsoleSender(), messages);
     }
-    public void info(String... messages) {
-        Info(messages);
+
+    /**
+     * @deprecated use {@link #info(String...)}
+     */
+    public void Info(String... messages) {
+        info(messages);
     }
+
     /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Empty} which will send message as normal without any formatting or etc.
      */
     public void send(CommandSender target, String... messages) {
         sendMessage(MessageMode.Empty, target, messages);
     }
+
     /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Personal}.
      */
@@ -113,32 +138,48 @@ public class Messenger {
     }
 
     /**
+     * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#BroadCast} or .{@link MessageMode#CriticalBroadCast}
+     */
+    public void broadcast(boolean critical, String... messages) {
+        sendMessage(critical ? MessageMode.CriticalBroadCast : MessageMode.BroadCast, Bukkit.getConsoleSender(), messages);
+    }
+
+    /**
+     * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#BroadCast}
+     */
+    public void broadcast(String... messages) {
+        sendMessage(MessageMode.BroadCast, Bukkit.getConsoleSender(), messages);
+    }
+
+    /**
      * The main method that will send the messages to their targets as well as formatting them.
-     * 
-     * @param mode The mode message is going to be sent
-     * @param target The target messages will be sent to
+     *
+     * @param mode     The mode message is going to be sent
+     * @param target   The target messages will be sent to
      * @param messages The messages to be sent to the target
      */
     public void sendMessage(@NotNull MessageMode mode, CommandSender target, String... messages) {
         if (messages == null) return;
-        boolean saveCritical = true;
-        boolean sendEveryone = (!(target instanceof Player) && (inGameMessaging.getOrDefault(mode, true) && !Arrays.asList(MessageMode.Personal, MessageMode.Operator, MessageMode.Empty).contains(mode)));
-        Collection<? extends Player> players = sendEveryone ? Bukkit.getOnlinePlayers() : new ArrayList<>();
         MessageMode.Prefix prefix = mode.getPrefix(this);
-        for (int i = 0; i < messages.length; i++) {
-            String message = (i == 0 ? prefix.prefix : prefix.tab) + messages[i];
-            target.sendMessage(message);
-            if (sendEveryone)
-                for (Player player:players)
-                    if (mode.hasPermission(plugin, player)) {
-                        player.sendMessage(message);
-                        saveCritical = false;
-                    }
+        List<String> newMessages = Arrays.stream(messages).map(message -> (message.equals(messages[0]) ? prefix.prefix : prefix.tab) + message).toList();
 
-            if (mode == MessageMode.Critical && saveCritical) {
-                criticalCache.add(message);
-            }
+        if (mode == MessageMode.CriticalBroadCast) {
+            broadcastMessageCache = newMessages;
+            broadcastPlayersCache.clear();
         }
+
+        Collection<? extends Player> players = mode.sendAll ? Bukkit.getOnlinePlayers().stream().filter(player -> mode.hasPermission(plugin, player)).toList() : new ArrayList<>();
+        newMessages.forEach(message -> {
+            target.sendMessage(message);
+            for (Player player : players) {
+                player.sendMessage(message);
+                if (mode == MessageMode.CriticalBroadCast)
+                    broadcastPlayersCache.add(player.getUniqueId().toString());
+            }
+
+            if (mode == MessageMode.Critical && players.size() > 0)
+                criticalCache.add(message);
+        });
     }
 
     /**
@@ -151,12 +192,8 @@ public class Messenger {
     /**
      * It will capture the resource from spigot API and will check if it is up to date or not.
      */
-    public void updateNotification(CommandSender target, boolean updates) {
-        if (target == null || !target.isOp() || plugin == null) return;
-        for (String message: criticalCache)
-            target.sendMessage(message);
-        criticalCache.clear();
-
+    public void updateNotification(@NotNull CommandSender target, boolean updates) {
+        if (plugin == null || !plugin.isEnabled()) return;
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             Version version = SpigotResource.getVersion(this.plugin.getSpigotID());
             reminder(() -> {
@@ -168,6 +205,21 @@ public class Messenger {
                 }
             });
         });
+    }
+
+    /**
+     * Will send all available caches to the player
+     */
+    public void sendCaches(@NotNull Player player) {
+        if (!broadcastPlayersCache.contains(player.getUniqueId().toString())) {
+            broadcastMessageCache.forEach(player::sendMessage);
+            broadcastPlayersCache.add(player.getUniqueId().toString());
+        }
+        if (player.isOp()) {
+            for (String message : criticalCache)
+                player.sendMessage(message);
+            criticalCache.clear();
+        }
     }
 
     /**
@@ -188,6 +240,7 @@ public class Messenger {
     /**
      * A method that will save the exception in the default folder with default "Exception" name.
      * A number will be added to the end to avoid overwriting.
+     *
      * @return the number added to file name
      */
     public int handleException(Throwable throwable) {
@@ -197,6 +250,7 @@ public class Messenger {
     /**
      * A method that will save the exception in the defined folder with default "Exception" name. If given file is not a directory default folder will be used.
      * A number will be added to the end to avoid overwriting.
+     *
      * @return the number added to file name
      */
     public int handleException(Throwable throwable, File exceptionFolder) {
@@ -206,6 +260,7 @@ public class Messenger {
     /**
      * A method that will save the exception in the default folder with defined name.
      * A number will be added to the end to avoid overwriting.
+     *
      * @return the number added to file name
      */
     public int handleException(Throwable throwable, String filename) {
@@ -215,6 +270,7 @@ public class Messenger {
     /**
      * A method that will save the exception in the defined folder with defined name. If given file is not a directory default folder will be used.
      * A number will be added to the end to avoid overwriting.
+     *
      * @return the number added to file name
      */
     public int handleException(Throwable exception, File exceptionFolder, String filename) {
@@ -224,6 +280,7 @@ public class Messenger {
     /**
      * A method that will save the exception in the default folder with default "Exception" name.
      * A number will be added to the end to avoid overwriting.
+     *
      * @return the number added to file name
      */
     public int handleException(String message, Throwable throwable) {
@@ -233,6 +290,7 @@ public class Messenger {
     /**
      * A method that will save the exception in the defined folder with default "Exception" name. If given file is not a directory default folder will be used.
      * A number will be added to the end to avoid overwriting.
+     *
      * @return the number added to file name
      */
     public int handleException(String message, Throwable throwable, File exceptionFolder) {
@@ -242,6 +300,7 @@ public class Messenger {
     /**
      * A method that will save the exception in the default folder with defined name.
      * A number will be added to the end to avoid overwriting.
+     *
      * @return the number added to file name
      */
     public int handleException(String message, Throwable throwable, String filename) {
@@ -251,6 +310,7 @@ public class Messenger {
     /**
      * A method that will save the exception in the defined folder with defined name. If given file is not a directory default folder will be used.
      * A number will be added to the end to avoid overwriting.
+     *
      * @return the number added to file name
      */
     public int handleException(String message, Throwable exception, File exceptionFolder, String filename) {
@@ -260,9 +320,12 @@ public class Messenger {
             File file = new File(exceptionFolder, String.format("%s_1.warn", filename));
             while (file.exists()) file = new File(exceptionFolder, String.format("%s_%d.warn", filename, ++count));
 
-            PrintStream ps = new PrintStream(file); exception.printStackTrace(ps); ps.close();
+            PrintStream ps = new PrintStream(file);
+            exception.printStackTrace(ps);
+            ps.close();
             Warning(String.format("%s and was saved as \"§c%s_%d.warn§r\"", message, filename, count));
-            if (!exceptionFolder.equals(this.exceptionFolder)) Warning("Mentioned error has been saved in following folder", exceptionFolder.getAbsolutePath());
+            if (!exceptionFolder.equals(this.exceptionFolder))
+                Warning("Mentioned error has been saved in following folder", exceptionFolder.getAbsolutePath());
             return count;
         } catch (Exception saveException) {
             Warning(String.format("%s and was unable to save it due: %s", message, saveException.getMessage()));
@@ -314,6 +377,7 @@ public class Messenger {
             }
             return false;
         }
+
         private boolean handleCommand(LogRecord logRecord, Throwable throwable) {
             Matcher matcher = COMMAND_PATTERN.matcher(logRecord.getMessage());
             if (matcher.find()) {
@@ -334,7 +398,8 @@ public class Messenger {
         }
 
 
-        @Override public void log(@NotNull LogRecord logRecord) {
+        @Override
+        public void log(@NotNull LogRecord logRecord) {
             if (logRecord.getThrown() != null) {
                 Throwable throwable = logRecord.getThrown();
 

@@ -130,12 +130,12 @@ public abstract class GUIInventory {
         player.openInventory(inventory);
 
         GUI_MANAGER.saveGUIInventory(player, this);
-        AGMCore.getMessenger().Debug("GUI", "GUI inventory opened", "Player= §6" + player.getName());
+        AGMCore.getMessenger().debug("GUI", "GUI inventory opened", "Player= §6" + player.getName());
     }
 
     public void close() {
         GUI_MANAGER.removeGUIInventory(player);
-        AGMCore.getMessenger().Debug("GUI", "GUI inventory closed", "Player= §6" + player.getName());
+        AGMCore.getMessenger().debug("GUI", "GUI inventory closed", "Player= §6" + player.getName());
 
         // Due packets and pings, Inventory might not close with a simple close call...
         Bukkit.getScheduler().runTaskLater(AGMCore.getInstance(), () -> {
