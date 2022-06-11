@@ -4,6 +4,7 @@ import me.ashenguard.agmcore.AGMCore;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.messenger.PlaceholderManager;
+import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.utils.Pair;
 import me.ashenguard.exceptions.NullValue;
 import org.bukkit.Bukkit;
@@ -13,10 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -110,6 +108,8 @@ public abstract class GUIInventory {
 
     protected final Player player;
     protected final GUIData data;
+
+    protected final List<Placeholder> placeholders = new ArrayList<>();
 
     protected final Inventory inventory;
 

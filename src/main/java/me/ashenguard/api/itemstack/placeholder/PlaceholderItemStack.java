@@ -21,6 +21,7 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public abstract class PlaceholderItemStack {
     protected static final ItemStack NULL_ITEM = new ItemStack(Material.STONE);
     protected static PlaceholderItemStack NULL = null;
@@ -62,13 +63,16 @@ public abstract class PlaceholderItemStack {
         return getItem(null);
     }
     public ItemStack getItem(OfflinePlayer player) {
+        return getItem(player, new ArrayList<>());
+    }
+    public ItemStack getItem(OfflinePlayer player, @NotNull Collection<Placeholder> placeholders) {
         if (basic == null) createBasicItem();
 
         ItemStack item = basic.clone();
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) return item;
-        if (name != null) itemMeta.setDisplayName(PlaceholderManager.translate(player, name));
-        if (lore != null && lore.size() > 0) itemMeta.setLore(PlaceholderManager.translate(player, lore));
+        if (name != null) itemMeta.setDisplayName(PlaceholderManager.translate(player, name, placeholders));
+        if (lore != null && lore.size() > 0) itemMeta.setLore(PlaceholderManager.translate(player, lore, placeholders));
         for (Map.Entry<NamespacedKey, Integer> entry: enchants.entrySet()) {
             Enchantment enchantment = Enchantment.getByKey(entry.getKey());
             if (enchantment != null) itemMeta.addEnchant(enchantment, entry.getValue() < 0 ? enchantment.getMaxLevel() : entry.getValue(), true);

@@ -66,7 +66,7 @@ public class GUIInventorySlot {
     }
 
     public void update(GUIInventory guiInventory, int tick) {
-        ItemStack item = items.get(tick % items.size()).getItem(guiInventory.getPlayer());
+        ItemStack item = items.get(tick % items.size()).getItem(guiInventory.getPlayer(), guiInventory.placeholders);
         guiInventory.inventory.setItem(slot, item);
     }
 }
