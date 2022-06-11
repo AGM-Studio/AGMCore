@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,11 +21,17 @@ public class PlaceholderManager {
     public static List<String> translate(OfflinePlayer player, @NotNull List<String> stringList) {
         return enable ? PlaceholderAPI.setPlaceholders(player, stringList) : translate(stringList);
     }
+    public static String[] translate(OfflinePlayer player, @NotNull String[] stringList) {
+        return translate(player, Arrays.stream(stringList).toList()).toArray(String[]::new);
+    }
     public static String translate(@NotNull String string) {
         return enable ? PlaceholderAPI.setPlaceholders(null, string) : ChatColor.translateAlternateColorCodes('&', string);
     }
     public static List<String> translate(@NotNull List<String> stringList) {
         return enable ? PlaceholderAPI.setPlaceholders(null, stringList) : stringList.stream().map(PlaceholderManager::translate).collect(Collectors.toList());
+    }
+    public static String[] translate(@NotNull String[] stringList) {
+        return translate(Arrays.stream(stringList).toList()).toArray(String[]::new);
     }
     public static String translate(OfflinePlayer player, @NotNull String string, Collection<Placeholder> placeholders) {
         for (Placeholder placeholder: placeholders) string = placeholder.apply(string, player);
@@ -37,10 +44,16 @@ public class PlaceholderManager {
         }).collect(Collectors.toList());
         return translate(player, stringList);
     }
+    public static String[] translate(OfflinePlayer player, @NotNull String[] stringList, Collection<Placeholder> placeholders) {
+        return translate(player, Arrays.stream(stringList).toList(), placeholders).toArray(String[]::new);
+    }
     public static String translate(@NotNull String string, Collection<Placeholder> placeholders) {
         return translate(null, string, placeholders);
     }
     public static List<String> translate(@NotNull List<String> stringList, Collection<Placeholder> placeholders) {
+        return translate(null, stringList, placeholders);
+    }
+    public static String[] translate(@NotNull String[] stringList, Collection<Placeholder> placeholders) {
         return translate(null, stringList, placeholders);
     }
 }
