@@ -19,23 +19,23 @@ public class Playtime implements Listener {
     private final static List<String> DAYS = Arrays.asList("D", "DAY", "DAYS");
 
     /**
-     * Return the result of placeholder.
-     * Supports:
-     * %AGMCore_Playtime%             Return time in ticks        (Always overflow)
-     * <p>
-     * %AGMCore_Playtime_Tick%        Return time in ticks        (No overflow - Add "_Total" to make it overflow)
-     * %AGMCore_Playtime_Micro%       Return time in microseconds (No overflow - Add "_Total" to make it overflow)
-     * %AGMCore_Playtime_Second%      Return time in seconds      (No overflow - Add "_Total" to make it overflow)
-     * %AGMCore_Playtime_Minute%      Return time in minutes      (No overflow - Add "_Total" to make it overflow)
-     * %AGMCore_Playtime_Hour%        Return time in hours        (No overflow - Add "_Total" to make it overflow)
-     * %AGMCore_Playtime_Day%         Return time in days
-     * <p>
-     * %AGMCore_Playtime_Total%       Return time with format     (5 days, 10:18:25)
+     * Return the result of placeholder. <br><br>
+     * %AGMCore_Playtime%             Return time in ticks        (Always overflow) <br>
+     * <br>
+     * %AGMCore_Playtime_Tick%        Return time in ticks        (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Playtime_Micro%       Return time in microseconds (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Playtime_Second%      Return time in seconds      (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Playtime_Minute%      Return time in minutes      (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Playtime_Hour%        Return time in hours        (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Playtime_Day%         Return time in days  <br>
+     * <br>
+     * %AGMCore_Playtime_Total%       Return time with format     (5 days, 10:18:25) <br>
      *
      * @param player the player of placeholder
      * @param value  value of placeholder
      * @return the placeholder
      */
+    @SuppressWarnings("DuplicatedCode")
     public static String getPlaceholderValue(OfflinePlayer player, String value) {
         AGMCore.getMessenger().Debug("Placeholders", "Placeholder has been requested.", String.format("Player= §6%s", player.getName()), String.format("Placeholder= §6{AGMCore_Playtime%s}", value));
 

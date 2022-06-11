@@ -10,7 +10,7 @@ import java.util.Map;
 public class Translations {
     private final Map<String, String> translations = new HashMap<>();
 
-    protected Translations(SpigotPlugin plugin, boolean separated) {
+    public Translations(SpigotPlugin plugin, boolean separated) {
         translations.put("Prefix", plugin.messenger.prefix);
 
         ConfigurationSection section = plugin.getConfig().getConfigurationSection("Translations");

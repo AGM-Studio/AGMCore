@@ -48,7 +48,7 @@ public class PlaceholderExtension extends PlaceholderExpansion {
         return plugin.getDescription().getVersion();
     }
     @Override public String onRequest(OfflinePlayer player, @NotNull String identifier) {
-        AGMCore.getMessenger().Info("REQUEST", identifier);
+        AGMCore.getMessenger().debug("PlaceholderAPI", "A placeholder has been requested", "Identifier= §6" + identifier);
         for (Placeholder placeholder: placeholderList)
             try {
                 if (placeholder.isValid(identifier)) return placeholder.getValue(player, identifier);

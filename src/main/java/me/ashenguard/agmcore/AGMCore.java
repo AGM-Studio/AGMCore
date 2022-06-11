@@ -11,7 +11,9 @@ import me.ashenguard.api.messenger.PlaceholderManager;
 import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.placeholder.PlaceholderExtension;
 import me.ashenguard.api.spigot.SpigotPlugin;
+import me.ashenguard.lib.statistics.Livetime;
 import me.ashenguard.lib.statistics.Playtime;
+import me.ashenguard.lib.statistics.Waketime;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -22,7 +24,6 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public final class AGMCore extends SpigotPlugin {
     private static AGMCore instance;
-    private static PlaceholderExtension phExtension;
     private static GUIManager guiManager;
     private static ItemLibrary itemLibrary;
 
@@ -31,9 +32,6 @@ public final class AGMCore extends SpigotPlugin {
     }
     public static Messenger getMessenger() {
         return instance.messenger;
-    }
-    public static PlaceholderExtension getPHExtension() {
-        return phExtension;
     }
     public static GUIManager getGUIManager() {
         return guiManager;
@@ -68,10 +66,7 @@ public final class AGMCore extends SpigotPlugin {
 
         guiManager = new GUIManager();
         itemLibrary = new ItemLibrary();
-        if (PlaceholderManager.enable) {
-            phExtension = new Placeholders();
-            phExtension.register();
-        }
+        if (PlaceholderManager.enable) new Placeholders().register();
         ExtensionLoader extensionLoader = new ExtensionLoader();
         extensions = extensionLoader.registerAllExtensions();
 
@@ -96,6 +91,8 @@ public final class AGMCore extends SpigotPlugin {
             super(AGMCore.getInstance());
 
             new Placeholder(this, s -> s.startsWith("Playtime"), s -> s.substring(8), Playtime::getPlaceholderValue);
+            new Placeholder(this, s -> s.startsWith("Livetime"), s -> s.substring(8), Livetime::getPlaceholderValue);
+            new Placeholder(this, s -> s.startsWith("Waketime"), s -> s.substring(8), Waketime::getPlaceholderValue);
 
             AGMCore.getMessenger().Debug("Placeholders", "Placeholders has been registered.");
         }
