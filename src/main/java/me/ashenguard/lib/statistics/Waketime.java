@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class Livetime {
+public class Waketime {
     private final static List<String> TICKS = Arrays.asList("T", "TICK", "TICKS");
     private final static List<String> MICRO = Arrays.asList("MICRO", "MICROS", "MICROSECOND", "MICROSECONDS");
     private final static List<String> SECOND = Arrays.asList("S", "SEC", "SECS", "SECOND", "SECONDS");
@@ -19,16 +19,16 @@ public class Livetime {
 
     /**
      * Return the result of placeholder. <br><br>
-     * %AGMCore_Livetime%             Return time in ticks        (Always overflow) <br>
+     * %AGMCore_Waketime%             Return time in ticks        (Always overflow) <br>
      * <br>
-     * %AGMCore_Livetime_Tick%        Return time in ticks        (No overflow - Add "_Total" to make it overflow) <br>
-     * %AGMCore_Livetime_Micro%       Return time in microseconds (No overflow - Add "_Total" to make it overflow) <br>
-     * %AGMCore_Livetime_Second%      Return time in seconds      (No overflow - Add "_Total" to make it overflow) <br>
-     * %AGMCore_Livetime_Minute%      Return time in minutes      (No overflow - Add "_Total" to make it overflow) <br>
-     * %AGMCore_Livetime_Hour%        Return time in hours        (No overflow - Add "_Total" to make it overflow) <br>
-     * %AGMCore_Livetime_Day%         Return time in days  <br>
+     * %AGMCore_Waketime_Tick%        Return time in ticks        (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Waketime_Micro%       Return time in microseconds (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Waketime_Second%      Return time in seconds      (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Waketime_Minute%      Return time in minutes      (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Waketime_Hour%        Return time in hours        (No overflow - Add "_Total" to make it overflow) <br>
+     * %AGMCore_Waketime_Day%         Return time in days  <br>
      * <br>
-     * %AGMCore_Livetime_Total%       Return time with format     (5 days, 10:18:25) <br>
+     * %AGMCore_Waketime_Total%       Return time with format     (5 days, 10:18:25) <br>
      *
      * @param player the player of placeholder
      * @param value  value of placeholder
@@ -36,11 +36,11 @@ public class Livetime {
      */
     @SuppressWarnings("DuplicatedCode")
     public static String getPlaceholderValue(OfflinePlayer player, String value) {
-        AGMCore.getMessenger().Debug("Placeholders", "Placeholder has been requested.", String.format("Player= §6%s", player.getName()), String.format("Placeholder= §6{AGMCore_Livetime%s}", value));
+        AGMCore.getMessenger().Debug("Placeholders", "Placeholder has been requested.", String.format("Player= §6%s", player.getName()), String.format("Placeholder= §6{AGMCore_Waketime%s}", value));
 
-        if (value == null || value.length() < 1) return String.valueOf(getLivetime(player));
+        if (value == null || value.length() < 1) return String.valueOf(getWaketime(player));
         else if (value.equalsIgnoreCase("_TOTAL")) {
-            long duration = Livetime.getLivetime(player);
+            long duration = Waketime.getWaketime(player);
 
             long days = convert(duration, TimeUnit.DAYS, false);
             long hours = convert(duration, TimeUnit.HOURS, false);
@@ -67,26 +67,26 @@ public class Livetime {
         else if (StringUtils.match(unit, TICKS, false)) timeUnit = null;
         else return "INVALID_FORMAT";
 
-        long livetime = Livetime.getLivetime(player, timeUnit, overflow);
-        return String.valueOf(livetime);
+        long waketime = Waketime.getWaketime(player, timeUnit, overflow);
+        return String.valueOf(waketime);
     }
 
     /**
-     * @param player whose livetime is requested
-     * @return the livetime in TICKS
+     * @param player whose waketime is requested
+     * @return the waketime in TICKS
      */
-    public static long getLivetime(OfflinePlayer player) {
-        return player.getStatistic(Statistic.TIME_SINCE_DEATH);
+    public static long getWaketime(OfflinePlayer player) {
+        return player.getStatistic(Statistic.TIME_SINCE_REST);
     }
 
     /**
-     * @param player   whose livetime is requested
-     * @param unit     the unit you want the livetime in
+     * @param player   whose waketime is requested
+     * @param unit     the unit you want the waketime in
      * @param overflow if set to true it will allow time unit overflow
-     * @return the livetime in the unit requested
+     * @return the waketime in the unit requested
      */
-    public static long getLivetime(OfflinePlayer player, TimeUnit unit, boolean overflow) {
-        return convert(getLivetime(player), unit, overflow);
+    public static long getWaketime(OfflinePlayer player, TimeUnit unit, boolean overflow) {
+        return convert(getWaketime(player), unit, overflow);
     }
 
     /**
