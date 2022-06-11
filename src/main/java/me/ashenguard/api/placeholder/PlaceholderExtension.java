@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class PHExtension extends PlaceholderExpansion {
+public class PlaceholderExtension extends PlaceholderExpansion {
     protected final SpigotPlugin plugin;
     protected final List<Placeholder> placeholderList = new ArrayList<>();
 
@@ -18,7 +18,7 @@ public class PHExtension extends PlaceholderExpansion {
         placeholderList.add(placeholder);
     }
 
-    public PHExtension(SpigotPlugin plugin) {
+    public PlaceholderExtension(SpigotPlugin plugin) {
         this.plugin = plugin;
         new Placeholder(this, "Version", ((player, name) -> getVersion()));
         new Placeholder(this, "Authors", ((player, name) -> getAuthor()));

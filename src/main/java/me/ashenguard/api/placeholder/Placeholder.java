@@ -19,11 +19,11 @@ public class Placeholder {
         return (String name) -> name.equals(string);
     }
 
-    public Placeholder(PHExtension extension, String identifier, BiFunction<OfflinePlayer, String, String> value) {
+    public Placeholder(PlaceholderExtension extension, String identifier, BiFunction<OfflinePlayer, String, String> value) {
         this(extension, equality(identifier), (String string) -> identifier, value);
     }
 
-    public Placeholder(PHExtension extension, Predicate<String> validator, Function<String, String> extractName, BiFunction<OfflinePlayer, String, String> value) {
+    public Placeholder(PlaceholderExtension extension, Predicate<String> validator, Function<String, String> extractName, BiFunction<OfflinePlayer, String, String> value) {
         this(validator, extractName, value);
         extension.addPlaceholder(this);
     }

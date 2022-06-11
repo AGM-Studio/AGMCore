@@ -8,8 +8,8 @@ import me.ashenguard.api.gui.GUIManager;
 import me.ashenguard.api.itemstack.ItemLibrary;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PlaceholderManager;
-import me.ashenguard.api.placeholder.PHExtension;
 import me.ashenguard.api.placeholder.Placeholder;
+import me.ashenguard.api.placeholder.PlaceholderExtension;
 import me.ashenguard.api.spigot.SpigotPlugin;
 import me.ashenguard.lib.statistics.Playtime;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public final class AGMCore extends SpigotPlugin {
     private static AGMCore instance;
-    private static PHExtension phExtension;
+    private static PlaceholderExtension phExtension;
     private static GUIManager guiManager;
     private static ItemLibrary itemLibrary;
 
@@ -32,7 +32,7 @@ public final class AGMCore extends SpigotPlugin {
     public static Messenger getMessenger() {
         return instance.messenger;
     }
-    public static PHExtension getPHExtension() {
+    public static PlaceholderExtension getPHExtension() {
         return phExtension;
     }
     public static GUIManager getGUIManager() {
@@ -91,7 +91,7 @@ public final class AGMCore extends SpigotPlugin {
         AGMEvents.deactivateDayCycleEvent(true);
     }
 
-    private static class Placeholders extends PHExtension {
+    private static class Placeholders extends PlaceholderExtension {
         public Placeholders() {
             super(AGMCore.getInstance());
 
