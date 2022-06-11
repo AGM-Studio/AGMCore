@@ -27,7 +27,8 @@ public class PlaceholderExtension extends PlaceholderExpansion {
     @Override public boolean register() {
         try {
             return super.register();
-        } catch (Exception ignored) {
+        } catch (Throwable throwable) {
+            plugin.messenger.handleException("While enabling placeholders an error occurred", throwable);
             return false;
         }
     }
