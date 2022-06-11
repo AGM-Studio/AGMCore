@@ -1,6 +1,7 @@
 package me.ashenguard.lib.statistics;
 
 import me.ashenguard.agmcore.AGMCore;
+import me.ashenguard.api.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.event.Listener;
@@ -10,42 +11,105 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Playtime implements Listener {
-    private final static List<String> MINUTE = Arrays.asList("_MIN", "_MINUTE", "_M");
-    private final static List<String> HOUR = Arrays.asList("_HOUR", "_H");
-    private final static List<String> DAYS = Arrays.asList("_DAY", "_D");
+    private final static List<String> TICKS = Arrays.asList("T", "TICK", "TICKS");
+    private final static List<String> MICRO = Arrays.asList("MICRO", "MICROS", "MICROSECOND", "MICROSECONDS");
+    private final static List<String> SECOND = Arrays.asList("S", "SEC", "SECS", "SECOND", "SECONDS");
+    private final static List<String> MINUTE = Arrays.asList("M", "MIN", "MINS", "MINUTE", "MINUTES");
+    private final static List<String> HOUR = Arrays.asList("H", "HOUR", "HOURS");
+    private final static List<String> DAYS = Arrays.asList("D", "DAY", "DAYS");
 
+    /**
+     * Return the result of placeholder.
+     * Supports:
+     * %AGMCore_Playtime%             Return time in ticks        (Always overflow)
+     * <p>
+     * %AGMCore_Playtime_Tick%        Return time in ticks        (No overflow - Add "_Total" to make it overflow)
+     * %AGMCore_Playtime_Micro%       Return time in microseconds (No overflow - Add "_Total" to make it overflow)
+     * %AGMCore_Playtime_Second%      Return time in seconds      (No overflow - Add "_Total" to make it overflow)
+     * %AGMCore_Playtime_Minute%      Return time in minutes      (No overflow - Add "_Total" to make it overflow)
+     * %AGMCore_Playtime_Hour%        Return time in hours        (No overflow - Add "_Total" to make it overflow)
+     * %AGMCore_Playtime_Day%         Return time in days
+     * <p>
+     * %AGMCore_Playtime_Total%       Return time with format     (5 days, 10:18:25)
+     *
+     * @param player the player of placeholder
+     * @param value  value of placeholder
+     * @return the placeholder
+     */
     public static String getPlaceholderValue(OfflinePlayer player, String value) {
         AGMCore.getMessenger().Debug("Placeholders", "Placeholder has been requested.", String.format("Player= §6%s", player.getName()), String.format("Placeholder= §6{AGMCore_Playtime%s}", value));
 
-        if (value.equalsIgnoreCase("_TOTAL")) {
-            long days = Playtime.getPlaytime(player, TimeUnit.DAYS);
-            long hours = Playtime.getPlaytime(player, TimeUnit.HOURS);
-            long minutes = Playtime.getPlaytime(player, TimeUnit.MINUTES);
-            return String.format("%d day%s, %d:%d", days, days > 1 ? "s" : "", hours, minutes);
+        if (value == null || value.length() < 1) return String.valueOf(getPlaytime(player));
+        else if (value.equalsIgnoreCase("_TOTAL")) {
+            long duration = Playtime.getPlaytime(player);
+            
+            long days = convert(duration, TimeUnit.DAYS, false);
+            long hours = convert(duration, TimeUnit.HOURS, false);
+            long minutes = convert(duration, TimeUnit.MINUTES, false);
+            long seconds = convert(duration, TimeUnit.SECONDS, false);
+            
+            if (days > 0)
+                return String.format("%d day%s, %d:%d:%d", days, days > 1 ? "s" : "", hours, minutes, seconds);
+            else 
+                return String.format("%d:%d:%d", hours, minutes, seconds);
         }
 
-        long playtime = getPlaytime(player, value);
-        if (playtime >= 0) return String.valueOf(playtime);
-        return String.valueOf(Playtime.getPlaytime(player));
+        boolean overflow = value.toUpperCase().endsWith("_TOTAL");
+        int start = value.startsWith("_") ? 1 : 0;
+        int index = value.indexOf("_", start);
+        String unit = index > 0 ? value.substring(start, index) : value.substring(start);
+
+        TimeUnit timeUnit;
+        if (StringUtils.match(unit, MICRO, false)) timeUnit = TimeUnit.MICROSECONDS;
+        else if (StringUtils.match(unit, SECOND, false)) timeUnit = TimeUnit.SECONDS;
+        else if (StringUtils.match(unit, MINUTE, false)) timeUnit = TimeUnit.MINUTES;
+        else if (StringUtils.match(unit, HOUR, false)) timeUnit = TimeUnit.MICROSECONDS;
+        else if (StringUtils.match(unit, DAYS, false)) timeUnit = TimeUnit.MICROSECONDS;
+        else if (StringUtils.match(unit, TICKS, false)) timeUnit = null;
+        else return "INVALID_FORMAT";
+
+        long playtime = Playtime.getPlaytime(player, timeUnit, overflow);
+        return String.valueOf(playtime);
     }
 
+    /**
+     * @param player whose playtime is requested
+     * @return the playtime in TICKS
+     */
     public static long getPlaytime(OfflinePlayer player) {
         return player.getStatistic(Statistic.PLAY_ONE_MINUTE);
     }
-    public static long getPlaytime(OfflinePlayer player, TimeUnit unit) {
-        return unit.convert(getPlaytime(player), TimeUnit.MINUTES);
+
+    /**
+     * @param player   whose playtime is requested
+     * @param unit     the unit you want the playtime in
+     * @param overflow if set to true it will allow time unit overflow
+     * @return the playtime in the unit requested
+     */
+    public static long getPlaytime(OfflinePlayer player, TimeUnit unit, boolean overflow) {
+        return convert(getPlaytime(player), unit, overflow);
     }
-    public static long getPlaytime(OfflinePlayer player, String unit) {
-        String value1 = unit.toUpperCase();
-        if (MINUTE.contains(value1)) return Playtime.getPlaytime(player, TimeUnit.MINUTES) % 60;
-        if (HOUR.contains(value1)) return Playtime.getPlaytime(player, TimeUnit.HOURS) % 24;
-        if (DAYS.contains(value1)) return Playtime.getPlaytime(player, TimeUnit.DAYS);
-        if (value1.startsWith("_TOTAL")) {
-            String value2 = value1.substring(6);
-            if (MINUTE.contains(value2)) return Playtime.getPlaytime(player, TimeUnit.MINUTES);
-            if (HOUR.contains(value2)) return Playtime.getPlaytime(player, TimeUnit.HOURS);
-            if (DAYS.contains(value2)) return Playtime.getPlaytime(player, TimeUnit.DAYS);
-        }
-        return -1;
+
+    /**
+     * Converts time units
+     *
+     * @param duration the time in ticks
+     * @param unit     the target unit
+     * @param overflow if it should allow overflow
+     * @return the conversion result
+     */
+    private static long convert(long duration, TimeUnit unit, boolean overflow) {
+        if (unit == null)
+            if (overflow) return duration;
+            else return duration % 20;
+
+        long result = unit.convert(duration / 20, TimeUnit.SECONDS);
+        if (overflow) return result;
+        return switch (unit) {
+            case DAYS -> result;
+            case HOURS -> result % 24;
+            case SECONDS, MINUTES -> result % 60;
+            default -> result % 1000;
+        };
     }
 }
