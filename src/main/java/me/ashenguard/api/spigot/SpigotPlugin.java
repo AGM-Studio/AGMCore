@@ -2,6 +2,7 @@ package me.ashenguard.api.spigot;
 
 import me.ashenguard.api.bstats.Metrics;
 import me.ashenguard.api.messenger.Messenger;
+import me.ashenguard.api.placeholder.Translations;
 import me.ashenguard.api.versions.MCVersion;
 import me.ashenguard.api.versions.Version;
 import org.bukkit.Bukkit;
@@ -51,6 +52,10 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
      */
     public final Messenger messenger;
     /**
+     * The translation instance of plugin.
+     */
+    public final Translations translation;
+    /**
      * The Bstats metrics, Will use the value returned by {@link #getBStatsID()}
      */
     public final Metrics metrics = new Metrics(this, getBStatsID());
@@ -63,6 +68,8 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
 
         this.messenger = new Messenger(this);
         Messenger.Logger.override(this);
+
+        this.translation = new Translations(this, getResource("translations.yml") != null);
     }
 
     /**
