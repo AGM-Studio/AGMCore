@@ -6,7 +6,7 @@ import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.messenger.PlaceholderManager;
 import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.utils.Pair;
-import me.ashenguard.exceptions.NullValue;
+import me.ashenguard.exceptions.NullAssertionError;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -84,7 +84,7 @@ public abstract class GUIInventory {
 
         protected void loadSlotMap(GUIInventory inventory, Configuration config) {
             ConfigurationSection section = config.getConfigurationSection("Slots");
-            NullValue.check("Slot section", section);
+            NullAssertionError.checkVariable("SlotSection", section);
 
             for (String key : section.getKeys(false)) {
                 List<String> slots = section.getStringList(String.format("%s.Slots", key));

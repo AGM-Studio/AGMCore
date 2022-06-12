@@ -1,5 +1,8 @@
 package me.ashenguard.exceptions;
 
+/**
+  @deprecated instead use {@link NullAssertionError}
+ */
 @SuppressWarnings("unused")
 public class NullValue extends RuntimeException {
     public NullValue() {

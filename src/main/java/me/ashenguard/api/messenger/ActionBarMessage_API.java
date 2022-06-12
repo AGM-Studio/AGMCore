@@ -2,7 +2,7 @@ package me.ashenguard.api.messenger;
 
 import me.ashenguard.api.spigot.SpigotPlugin;
 import me.ashenguard.api.utils.Reflections;
-import me.ashenguard.exceptions.NullValue;
+import me.ashenguard.exceptions.NullAssertionError;
 import me.ashenguard.lib.events.ActionBarMessageEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -36,14 +36,14 @@ public class ActionBarMessage_API extends ActionBarMessage{
         Class<?> entityPlayerClass = Reflections.getClass("EntityPlayer");
         Class<?> playerConnectionClass = Reflections.getClass("PlayerConnection");
 
-        NullValue.check("CraftPlayerClass", craftPlayerClass);
-        NullValue.check("PacketPlayOutChatClass", packetPlayOutChatClass);
-        NullValue.check("PacketClass", packetClass);
-        NullValue.check("ChatComponentTextClass", chatComponentTextClass);
-        NullValue.check("IChatBaseComponentClass", iChatBaseComponentClass);
-        NullValue.check("ChatMessageTypeClass", chatMessageTypeClass);
-        NullValue.check("EntityPlayerClass", entityPlayerClass);
-        NullValue.check("PlayerConnectionClass", playerConnectionClass);
+        NullAssertionError.checkVariable("CraftPlayerClass", craftPlayerClass);
+        NullAssertionError.checkVariable("PacketPlayOutChatClass", packetPlayOutChatClass);
+        NullAssertionError.checkVariable("PacketClass", packetClass);
+        NullAssertionError.checkVariable("ChatComponentTextClass", chatComponentTextClass);
+        NullAssertionError.checkVariable("IChatBaseComponentClass", iChatBaseComponentClass);
+        NullAssertionError.checkVariable("ChatMessageTypeClass", chatMessageTypeClass);
+        NullAssertionError.checkVariable("EntityPlayerClass", entityPlayerClass);
+        NullAssertionError.checkVariable("PlayerConnectionClass", playerConnectionClass);
 
         chatMessageType = null;
         Object[] chatMessageTypes = chatMessageTypeClass.getEnumConstants();
@@ -63,11 +63,11 @@ public class ActionBarMessage_API extends ActionBarMessage{
         playerConnectionField = entityPlayerClass.getDeclaredField("playerConnection");
         sendPacketMethod = playerConnectionClass.getDeclaredMethod("sendPacket", packetClass);
 
-        NullValue.check("ChatComponentTextConstructor", chatComponentTextConstructor);
-        NullValue.check("PacketConstructor", packetConstructor);
-        NullValue.check("CraftPlayerHandleMethod", craftPlayerHandleMethod);
-        NullValue.check("PlayerConnectionField", playerConnectionField);
-        NullValue.check("SendPacketMethod", sendPacketMethod);
+        NullAssertionError.checkVariable("ChatComponentTextConstructor", chatComponentTextConstructor);
+        NullAssertionError.checkVariable("PacketConstructor", packetConstructor);
+        NullAssertionError.checkVariable("CraftPlayerHandleMethod", craftPlayerHandleMethod);
+        NullAssertionError.checkVariable("PlayerConnectionField", playerConnectionField);
+        NullAssertionError.checkVariable("SendPacketMethod", sendPacketMethod);
 
         initialized = true;
     }
