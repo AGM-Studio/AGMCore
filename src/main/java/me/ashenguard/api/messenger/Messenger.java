@@ -170,9 +170,9 @@ public class Messenger {
 
         Collection<? extends Player> players = mode.sendAll ? Bukkit.getOnlinePlayers().stream().filter(player -> mode.hasPermission(plugin, player)).toList() : new ArrayList<>();
         newMessages.forEach(message -> {
-            target.sendMessage(message);
+            target.sendMessage(target instanceof Player ? PlaceholderManager.translate((Player) target, message) : PlaceholderManager.translate(message));
             for (Player player : players) {
-                player.sendMessage(message);
+                player.sendMessage(PlaceholderManager.translate(player, message));
                 if (mode == MessageMode.CriticalBroadCast)
                     broadcastPlayersCache.add(player.getUniqueId().toString());
             }

@@ -18,9 +18,9 @@ public class InstanceAssertionError extends AssertionError {
     }
 
     public static void check(Object object, Class<?> cls) {
-        if (cls.isInstance(object)) throw new InstanceAssertionError();
+        if (!cls.isInstance(object)) throw new InstanceAssertionError();
     }
     public static void check(Object object, Class<?> cls, String message) {
-        if (cls.isInstance(object)) throw new InstanceAssertionError(message);
+        if (!cls.isInstance(object)) throw new InstanceAssertionError(message);
     }
 }

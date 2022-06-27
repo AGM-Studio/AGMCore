@@ -14,7 +14,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -89,8 +92,6 @@ public abstract class GUIInventory {
             for (String key : section.getKeys(false)) {
                 List<String> slots = section.getStringList(String.format("%s.Slots", key));
                 List<String> itemList = section.getStringList(String.format("%s.Items", key));
-
-                AGMCore.getMessenger().debug("GUI", String.format("Loading %s on %s", Arrays.toString(itemList.toArray()), Arrays.toString(slots.toArray())));
 
                 for (String slot : slots) {
                     Pair<Integer, Integer> sop = getSlotAndOffset(slot);

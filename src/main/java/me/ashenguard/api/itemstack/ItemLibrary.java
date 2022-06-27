@@ -38,14 +38,12 @@ public class ItemLibrary {
 
         FilenameFilter filter = (dir, name) -> {
             String extension = name.substring(name.lastIndexOf("."));
-            return extension.equalsIgnoreCase("yml") || extension.equalsIgnoreCase("yaml");
+            return extension.equalsIgnoreCase(".yml") || extension.equalsIgnoreCase(".yaml");
         };
 
-        for (File file: holder.listFiles(filter)) {
-            loadGUIConfig(file);
-        }
+        for (File file: holder.listFiles(filter)) loadGUIConfig(file);
 
-        AGMCore.getMessenger().debug("General", "§dItemLibrary§r has been loaded.");
+        AGMCore.getMessenger().debug("GUI", "§dItemLibrary§r has been loaded.");
     }
 
     public static void createLibraryFile(SpigotPlugin plugin, String filename, String resource) {
@@ -62,10 +60,10 @@ public class ItemLibrary {
             try {
                 if (config.isConfigurationSection(key)) {
                     PlaceholderItemStack item = PlaceholderItemStack.fromSection(config.getConfigurationSection(key));
-                    if (item != null) itemMap.put(new NamespacedKey(filename, key), item);
+                    if (item != null) itemMap.put(new NamespacedKey(filename, key.toLowerCase()), item);
                 } else if (config.isString(key)) {
                     NamespacedKey namespace = NamespacedKey.fromString(key);
-                    if (namespace != null) keyMap.put(new NamespacedKey(filename, key), namespace);
+                    if (namespace != null) keyMap.put(new NamespacedKey(filename, key.toLowerCase()), namespace);
                 } else {
                     Object obj = config.get(key);
                     throw new IllegalFormatException(String.format("Items in the ItemLibrary can only be a namespace as a reference or a section not a \"%s\"", obj == null ? null : obj.getClass().getSimpleName()));
@@ -77,7 +75,7 @@ public class ItemLibrary {
     }
 
     public @Nullable PlaceholderItemStack getItem(String string) {
-        return getItem(NamespacedKey.fromString(string));
+        return getItem(NamespacedKey.fromString(string.toLowerCase()));
     }
     @SuppressWarnings("deprecation")
     public @Nullable PlaceholderItemStack getItem(String parent, String key) {
@@ -87,6 +85,8 @@ public class ItemLibrary {
         return getItem(new NamespacedKey(plugin, key));
     }
     public @Nullable PlaceholderItemStack getItem(NamespacedKey key) {
+        if (key == null) return null;
+
         PlaceholderItemStack item = itemMap.getOrDefault(key, null);
         if (item != null) return item;
 

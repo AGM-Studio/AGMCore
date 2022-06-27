@@ -58,7 +58,6 @@ public class GUIInventorySlot {
         return this;
     }
 
-
     public GUIInventorySlot withOffset(int offset) {
         offset = Math.min(this.items.size(), offset);
         Collections.rotate(items, offset);
@@ -66,7 +65,7 @@ public class GUIInventorySlot {
     }
 
     public void update(GUIInventory guiInventory, int tick) {
-        ItemStack item = items.get(tick % items.size()).getItem(guiInventory.getPlayer(), guiInventory.placeholders);
+        ItemStack item = items.size() > 0 ? items.get(tick % items.size()).getItem(guiInventory.getPlayer(), guiInventory.placeholders) : null;
         guiInventory.inventory.setItem(slot, item);
     }
 }
