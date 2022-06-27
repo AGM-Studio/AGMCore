@@ -29,6 +29,9 @@ Debug:
   Enable: false
   General: true
   Extensions: true
+
+  Hook: true
+  Vault: true
   PlaceholderAPI: true
 
 InGameMessages:

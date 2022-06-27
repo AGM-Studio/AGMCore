@@ -11,9 +11,11 @@ import me.ashenguard.api.messenger.PlaceholderManager;
 import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.placeholder.PlaceholderExtension;
 import me.ashenguard.api.spigot.SpigotPlugin;
+import me.ashenguard.lib.hooks.VaultAPI;
 import me.ashenguard.lib.statistics.Livetime;
 import me.ashenguard.lib.statistics.Playtime;
 import me.ashenguard.lib.statistics.Waketime;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -42,7 +44,7 @@ public final class AGMCore extends SpigotPlugin {
 
     @Override
     public @NotNull List<String> getSoftRequirements() {
-        return Arrays.asList("PlaceholderAPI", "ProtocolLib", "Citizens");
+        return Arrays.asList("PlaceholderAPI", "ProtocolLib", "Citizens", "Vault", "LuckPerms");
     }
 
     @Override
@@ -78,6 +80,8 @@ public final class AGMCore extends SpigotPlugin {
         metrics.addCustomChart(extension_chart);
 
         MinecraftVersion.getVersion();
+
+        Bukkit.getScheduler().runTaskLater(this, VaultAPI::setup, 10);
     }
 
     @Override
