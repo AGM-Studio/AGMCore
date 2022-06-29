@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -30,15 +31,26 @@ public abstract class AdvancedCommand implements CommandExecutor, TabCompleter {
     }
 
     public abstract void run(CommandSender sender, Command command, String label, String[] args);
+
     public abstract List<String> tabs(CommandSender sender, Command command, String alias, String[] args);
+
+    private final List<AdvancedSubcommand> subcommands = new ArrayList<>();
+    protected void addSubcommand(AdvancedSubcommand subcommand) {
+        if (subcommands.contains(subcommand)) return;
+        subcommands.add(subcommand);
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         try {
-            if (command.getName().equalsIgnoreCase(name)) {
-                if (playerRequired.test(args)) InstanceAssertionError.check(sender, Player.class, plugin.translation.get("PlayerOnly", null));
-                run(sender, command, label, args);
+            if (playerRequired.test(args))
+                InstanceAssertionError.check(sender, Player.class, plugin.translation.get("PlayerOnly", null));
+            if (args.length > 0) {
+                AdvancedSubcommand subcommand = subcommands.stream().filter(s -> s.match(args[0])).findFirst().orElse(null);
+                if (subcommand != null)
+                    return subcommand.onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
             }
+            run(sender, command, label, args);
         } catch (AssertionError assertion) {
             if (assertion.getMessage() != null && assertion.getMessage().length() > 0)
                 plugin.messenger.response(sender, assertion.getMessage().split("\n"));
