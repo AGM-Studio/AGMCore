@@ -31,7 +31,6 @@ public abstract class AdvancedCommand implements CommandExecutor, TabCompleter {
     }
 
     public abstract void run(CommandSender sender, Command command, String label, String[] args);
-
     public abstract List<String> tabs(CommandSender sender, Command command, String alias, String[] args);
 
     private final List<AdvancedSubcommand> subcommands = new ArrayList<>();
@@ -63,7 +62,14 @@ public abstract class AdvancedCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        List<String> list = tabs(sender, command, alias, args);
-        return list == null ? new ArrayList<>() : list;
+        List<String> list = new ArrayList<>();
+        List<String> tabs = tabs(sender, command, alias, args);
+
+        if (tabs != null) list.addAll(tabs);
+        if (args.length == 0 || args.length == 1) subcommands.forEach(subcommand -> list.addAll(subcommand.aliases));
+        else subcommands.stream().filter(s -> s.match(args[0])).findFirst().ifPresent(subcommand -> list.addAll(subcommand.onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length))));
+
+        String arg = args[args.length - 1];
+        return list.stream().filter(tab -> tab.toLowerCase().startsWith(arg.toLowerCase())).toList();
     }
 }
