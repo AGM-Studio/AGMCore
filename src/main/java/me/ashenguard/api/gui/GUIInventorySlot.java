@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @SuppressWarnings("UnusedReturnValue")
@@ -25,6 +26,12 @@ public class GUIInventorySlot {
     public GUIInventorySlot setAction(Function<InventoryClickEvent, Boolean> action) {
         this.action = action;
         return this;
+    }
+    public GUIInventorySlot setAction(Consumer<InventoryClickEvent> action) {
+        return this.setAction(event -> {
+            action.accept(event);
+            return true;
+        });
     }
     public boolean runAction(InventoryClickEvent event) {
         if (action == null) return true;
