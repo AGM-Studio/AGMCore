@@ -1,7 +1,5 @@
 package me.ashenguard.api.versions;
 
-import me.ashenguard.exceptions.IllegalFormatException;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +13,7 @@ public class Version implements Comparable<Version> {
 
     public Version(String version) {
         Matcher validator = PATTERN.matcher(version);
-        if (!validator.find()) throw new IllegalFormatException("version format is invalid");
+        if (!validator.find()) throw new IllegalArgumentException("version format is invalid");
 
         version = validator.group();
         Matcher matcher = Pattern.compile("\\d+").matcher(version);

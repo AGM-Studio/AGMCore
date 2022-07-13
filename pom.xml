@@ -4,7 +4,7 @@
 
     <groupId>me.ashenguard</groupId>
     <artifactId>AGMCore</artifactId>
-    <version>4.1.0</version>
+    <version>4.2.0</version>
     <packaging>jar</packaging>
 
     <name>AGMCore</name>
@@ -35,7 +35,7 @@
                 <version>2.3.2</version>
                 <configuration>
                     <finalName>${project.name}-${project.version}</finalName>
-                    <outputDirectory>D:\\AGM\Spigot\Servers\SPIGOT1.18.1\plugins</outputDirectory>
+                    <outputDirectory>D:\\AGM\Spigot\Servers\SPIGOT1.19\plugins</outputDirectory>
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -146,7 +146,7 @@
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.9.2</version>
+            <version>2.10.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

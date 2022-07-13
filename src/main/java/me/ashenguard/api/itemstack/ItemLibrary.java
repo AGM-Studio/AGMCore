@@ -4,7 +4,6 @@ import me.ashenguard.agmcore.AGMCore;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.spigot.SpigotPlugin;
-import me.ashenguard.exceptions.IllegalFormatException;
 import me.ashenguard.exceptions.PluginNotEnabled;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -66,7 +65,7 @@ public class ItemLibrary {
                     if (namespace != null) keyMap.put(new NamespacedKey(filename, key.toLowerCase()), namespace);
                 } else {
                     Object obj = config.get(key);
-                    throw new IllegalFormatException(String.format("Items in the ItemLibrary can only be a namespace as a reference or a section not a \"%s\"", obj == null ? null : obj.getClass().getSimpleName()));
+                    throw new IllegalArgumentException(String.format("Items in the ItemLibrary can only be a namespace as a reference or a section not a \"%s\"", obj == null ? null : obj.getClass().getSimpleName()));
                 }
             } catch (Throwable throwable) {
                 AGMCore.getMessenger().handleException(String.format("While trying to load item \"%s\" from \"%s\", an error occurred", key, filename), throwable);

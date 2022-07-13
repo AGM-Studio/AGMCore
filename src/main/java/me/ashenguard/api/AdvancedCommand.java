@@ -1,12 +1,11 @@
 package me.ashenguard.api;
 
 import me.ashenguard.api.spigot.SpigotPlugin;
-import me.ashenguard.exceptions.InstanceAssertionError;
+import me.ashenguard.exceptions.AdvancedCommandException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -43,16 +42,16 @@ public abstract class AdvancedCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         try {
             if (playerRequired.test(args))
-                InstanceAssertionError.check(sender, Player.class, plugin.translation.get("PlayerOnly", null));
+                AdvancedCommandException.checkIsPlayer(sender, plugin.translation.get("PlayerOnly", null));
             if (args.length > 0) {
                 AdvancedSubcommand subcommand = subcommands.stream().filter(s -> s.match(args[0])).findFirst().orElse(null);
                 if (subcommand != null)
                     return subcommand.onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
             }
             run(sender, command, label, args);
-        } catch (AssertionError assertion) {
-            if (assertion.getMessage() != null && assertion.getMessage().length() > 0)
-                plugin.messenger.response(sender, assertion.getMessage().split("\n"));
+        } catch (AdvancedCommandException exception) {
+            if (exception.getMessage() != null && exception.getMessage().length() > 0)
+                plugin.messenger.response(sender, exception.getMessage().split("\n"));
         } catch (Throwable throwable) {
             plugin.getLogger().log(Level.WARNING, String.format("Command %s for %s generated an exception", this.name, plugin.getDescription().getFullName()), throwable);
             plugin.messenger.response(sender, "§cWhile handling your request an unexpected error happened...§r");
