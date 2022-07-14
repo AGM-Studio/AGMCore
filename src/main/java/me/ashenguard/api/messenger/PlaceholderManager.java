@@ -16,19 +16,19 @@ public class PlaceholderManager {
     public static final boolean enable = Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null;
 
     public static String translate(OfflinePlayer player, @NotNull String string) {
-        return enable ? PlaceholderAPI.setPlaceholders(player, string) : translate(string);
+        return color(enable ? PlaceholderAPI.setPlaceholders(player, string) : string);
     }
     public static List<String> translate(OfflinePlayer player, @NotNull List<String> stringList) {
-        return enable ? PlaceholderAPI.setPlaceholders(player, stringList) : translate(stringList);
+        return color(enable ? PlaceholderAPI.setPlaceholders(player, stringList) : stringList);
     }
     public static String[] translate(OfflinePlayer player, @NotNull String[] stringList) {
         return translate(player, Arrays.stream(stringList).toList()).toArray(String[]::new);
     }
     public static String translate(@NotNull String string) {
-        return enable ? PlaceholderAPI.setPlaceholders(null, string) : ChatColor.translateAlternateColorCodes('&', string);
+        return color(enable ? PlaceholderAPI.setPlaceholders(null, string) : string);
     }
     public static List<String> translate(@NotNull List<String> stringList) {
-        return enable ? PlaceholderAPI.setPlaceholders(null, stringList) : stringList.stream().map(PlaceholderManager::translate).collect(Collectors.toList());
+        return color(enable ? PlaceholderAPI.setPlaceholders(null, stringList) : stringList);
     }
     public static String[] translate(@NotNull String[] stringList) {
         return translate(Arrays.stream(stringList).toList()).toArray(String[]::new);
@@ -55,5 +55,15 @@ public class PlaceholderManager {
     }
     public static String[] translate(@NotNull String[] stringList, Collection<Placeholder> placeholders) {
         return translate(null, stringList, placeholders);
+    }
+    
+    public static String color(String string) {
+        return ChatColor.translateAlternateColorCodes('&', string);
+    }
+    public static List<String> color(List<String> string) {
+        return string.stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).toList();
+    }
+    public static String[] color(String[] string) {
+        return Arrays.stream(string).map(s -> ChatColor.translateAlternateColorCodes('&', s)).toArray(String[]::new);
     }
 }

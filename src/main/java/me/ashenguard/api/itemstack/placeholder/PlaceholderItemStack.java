@@ -102,7 +102,7 @@ public abstract class PlaceholderItemStack {
     }
 
     protected PlaceholderItemStack(String name, List<String> lore, boolean glow, SafeCallable<Integer> amount, int cmd, Map<NamespacedKey, Integer> enchants) {
-        this.name = name;
+        this.name = "".equals(name) ? " " : name;
         this.lore = lore;
         this.amount = amount;
         this.glow = glow;
