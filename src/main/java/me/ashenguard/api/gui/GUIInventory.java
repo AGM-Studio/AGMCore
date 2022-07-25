@@ -162,7 +162,7 @@ public abstract class GUIInventory {
     }
 
     public String getTitle() {
-        return PlaceholderManager.translate(player, data.TITLE);
+        return PlaceholderManager.translate(player, data.TITLE, placeholders);
     }
 
     public int getSize() {
