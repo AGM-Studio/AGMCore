@@ -80,6 +80,8 @@ public final class AGMCore extends SpigotPlugin {
     public void onPluginDisable() {
         for (CoreExtension extension: extensions.values()) extension.onDisable();
         AGMEvents.deactivateDayCycleEvent(true);
+
+        getGUIManager().closeAll();
     }
 
     private static class Placeholders extends PlaceholderExtension {
