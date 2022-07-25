@@ -13,7 +13,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -33,14 +32,14 @@ public abstract class SpigotPlugin extends JavaPlugin implements Listener {
      * @return the name of all plugins that this plugin needs, In case of one being missing, plugin will get disabled.
      */
     public @NotNull List<String> getRequirements() {
-        return new ArrayList<>();
+        return getDescription().getDepend();
     }
 
     /**
      * @return the name of all plugins that this plugin should have, In case of one being missing, plugin will only send a warning.
      */
     public @NotNull List<String> getSoftRequirements() {
-        return new ArrayList<>();
+        return getDescription().getSoftDepend();
     }
 
     /**

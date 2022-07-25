@@ -16,11 +16,8 @@ import me.ashenguard.lib.statistics.Livetime;
 import me.ashenguard.lib.statistics.Playtime;
 import me.ashenguard.lib.statistics.Waketime;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -40,11 +37,6 @@ public final class AGMCore extends SpigotPlugin {
     }
     public static ItemLibrary getItemLibrary() {
         return itemLibrary;
-    }
-
-    @Override
-    public @NotNull List<String> getSoftRequirements() {
-        return Arrays.asList("PlaceholderAPI", "ProtocolLib", "Citizens", "Vault", "LuckPerms");
     }
 
     @Override
