@@ -23,17 +23,17 @@ public abstract class AdvancedSubcommand {
     protected Predicate<String[]> playerRequired = (args) -> false;
 
     public AdvancedSubcommand(AdvancedCommand base, String name, boolean ignoreCase) {
-        this.name = name;
-        this.ignoreCase = ignoreCase;
-        this.plugin = base.plugin;
+        this(base.plugin, name, ignoreCase);
         base.addSubcommand(this);
-        aliases.add(name);
     }
     public AdvancedSubcommand(AdvancedSubcommand base, String name, boolean ignoreCase) {
+        this(base.plugin, name, ignoreCase);
+        base.addSubcommand(this);
+    }
+    public AdvancedSubcommand(SpigotPlugin plugin, String name, boolean ignoreCase) {
         this.name = name;
         this.ignoreCase = ignoreCase;
-        this.plugin = base.plugin;
-        base.addSubcommand(this);
+        this.plugin = plugin;
         aliases.add(name);
     }
 
