@@ -13,7 +13,12 @@ import java.util.List;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
+@Deprecated(since = "4.3", forRemoval = true)
 public abstract class AdvancedSubcommand {
+    /**
+     * @deprecated Use {@link me.ashenguard.api.commands.AGMCommand} instead
+     */
+
     protected final String name;
     protected final boolean ignoreCase;
     protected final List<String> aliases = new ArrayList<>();

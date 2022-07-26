@@ -5,19 +5,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class NestedMap <T, U>{
     private final Map<T, NestedMap<T, U>> maps = new HashMap<>();
     private final Map<T, U> values = new HashMap<>();
-
-    public void addKey(T key) {
-        maps.putIfAbsent(key, new NestedMap<>());
-        values.putIfAbsent(key, null);
-    }
-    public void addKey(T key, U value) {
-        maps.putIfAbsent(key, new NestedMap<>());
-        values.putIfAbsent(key, value);
-    }
 
     public int size() {
         return values.size();
@@ -29,10 +20,16 @@ public class NestedMap <T, U>{
     public boolean containsKey(T key) {
         return values.containsKey(key);
     }
+    public boolean hasNest(T key) {
+        return maps.get(key) != null;
+    }
 
     public U getValue(T[] keys) {
         NestedMap<T, U> map = this;
-        for (int i = 0; i < keys.length - 1; i++) map = map.getNest(keys[i]);
+        for (int i = 0; i < keys.length - 1; i++) {
+            map = map.getNest(keys[i]);
+            if (map == null) return null;
+        }
         return map.getValue(keys[keys.length - 1]);
     }
     public U getValue(T key) {
@@ -47,15 +44,16 @@ public class NestedMap <T, U>{
         return value == null ? def : value;
     }
     public NestedMap<T, U> getNest(T key) {
-        NestedMap<T, U> nest = maps.get(key);
-        if (nest == null) throw new NotFoundException(String.format("Nest \"%s\" is not found in this map", key));
-        return nest;
+        return maps.get(key);
     }
 
     @Nullable
     public U putValue(T key, U value) {
-        maps.putIfAbsent(key, new NestedMap<>());
         return values.put(key, value);
+    }
+    public NestedMap<T, U> addNest(T key) {
+        maps.putIfAbsent(key, new NestedMap<>());
+        return maps.get(key);
     }
 
     public U remove(T key) {
@@ -108,21 +106,6 @@ public class NestedMap <T, U>{
 
         public NestedMap<T, U> getNest() {
             return nest;
-        }
-    }
-
-    public static class NotFoundException extends RuntimeException {
-        protected NotFoundException() {
-            super();
-        }
-        protected NotFoundException(String message) {
-            super(message);
-        }
-        protected NotFoundException(Throwable cause) {
-            super(cause);
-        }
-        protected NotFoundException(String message, Throwable cause) {
-            super(message, cause);
         }
     }
 }

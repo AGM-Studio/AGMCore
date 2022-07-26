@@ -15,7 +15,12 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 
 @SuppressWarnings({"SameReturnValue", "unused", "ConstantConditions"})
+@Deprecated(since = "4.3", forRemoval = true)
 public abstract class AdvancedCommand implements CommandExecutor, TabCompleter {
+    /**
+     * @deprecated Use {@link me.ashenguard.api.commands.AGMCommand} instead
+     */
+
     protected final SpigotPlugin plugin;
     protected final String name;
 
