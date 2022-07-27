@@ -18,26 +18,17 @@ public class NestedMap <T, U>{
     }
 
     public boolean containsKey(T key) {
-        return values.containsKey(key);
+        return getEntry(key) != null;
     }
     public boolean hasNest(T key) {
         return maps.get(key) != null;
     }
-
-    public U getValue(T[] keys) {
-        NestedMap<T, U> map = this;
-        for (int i = 0; i < keys.length - 1; i++) {
-            map = map.getNest(keys[i]);
-            if (map == null) return null;
-        }
-        return map.getValue(keys[keys.length - 1]);
+    public boolean hasValue(T key) {
+        return values.get(key) != null;
     }
+
     public U getValue(T key) {
         return values.get(key);
-    }
-    public U getValue(T[] keys, U def) {
-        U value = getValue(keys);
-        return value == null ? def : value;
     }
     public U getValue(T key, U def) {
         U value = getValue(key);
@@ -45,6 +36,13 @@ public class NestedMap <T, U>{
     }
     public NestedMap<T, U> getNest(T key) {
         return maps.get(key);
+    }
+
+    public Entry<T, U> getEntry(T key) {
+        U value = values.get(key);
+        NestedMap<T, U> nest = maps.get(key);
+        if (value == null && nest == null) return null;
+        return new Entry<>(key, value, nest);
     }
 
     @Nullable
@@ -68,7 +66,9 @@ public class NestedMap <T, U>{
 
     @NotNull
     public Set<T> keySet() {
-        return values.keySet();
+        Set<T> set = values.keySet();
+        set.addAll(maps.keySet());
+        return set;
     }
 
     @NotNull
