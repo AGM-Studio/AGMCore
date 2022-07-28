@@ -7,5 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface PlayerOnly {
+public @interface AGMSubcommandHandler {
+    String value();
 }
