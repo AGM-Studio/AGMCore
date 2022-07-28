@@ -7,6 +7,10 @@ authors: [Ashenguard]
 description: Basic API for AGMPlugins
 website: https://agmdev.xyz
 
+commands:
+  test:
+    aliases: [core]
+
 permissions:
   AGMCore.*:
     description: All permissions related to this plugin

@@ -92,4 +92,7 @@ public abstract class AGMCommand implements TabCompleter, CommandExecutor {
         }
     }
 
+    public String getName() {
+        return name;
+    }
 }

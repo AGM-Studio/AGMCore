@@ -10,6 +10,7 @@ import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PlaceholderManager;
 import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.placeholder.PlaceholderExtension;
+import me.ashenguard.api.placeholder.Translations;
 import me.ashenguard.api.spigot.SpigotPlugin;
 import me.ashenguard.lib.hooks.VaultAPI;
 import me.ashenguard.lib.statistics.Livetime;
@@ -37,6 +38,9 @@ public final class AGMCore extends SpigotPlugin {
     }
     public static ItemLibrary getItemLibrary() {
         return itemLibrary;
+    }
+    public static Translations getTranslation() {
+        return instance.translation;
     }
 
     @Override
