@@ -75,8 +75,17 @@ public class Messenger {
     }
 
     /**
+     * A method that get message from {@link Message} provided and send it to {@link #debug(String, String...)}
+     */
+    public void debug(String type, Message... messages) {
+        String[] strings = Arrays.stream(messages).map(message -> plugin.translation.get(message.getPath(), message.getDefault())).toArray(String[]::new);
+        debug(type, strings);
+    }
+
+    /**
      * @deprecated use {@link #debug(String, String...)}
      */
+    @Deprecated(forRemoval = true)
     public void Debug(String type, String... messages) {
         debug(type, messages);
     }
@@ -89,8 +98,17 @@ public class Messenger {
     }
 
     /**
+     * A method that get message from {@link Message} provided and send it to {@link #critical(String...)}
+     */
+    public void critical(Message... messages) {
+        String[] strings = Arrays.stream(messages).map(message -> plugin.translation.get(message.getPath(), message.getDefault())).toArray(String[]::new);
+        critical(strings);
+    }
+
+    /**
      * @deprecated use {@link #critical(String...)}
      */
+    @Deprecated(forRemoval = true)
     public void Critical(String... messages) {
         critical(messages);
     }
@@ -103,8 +121,17 @@ public class Messenger {
     }
 
     /**
+     * A method that get message from {@link Message} provided and send it to {@link #warning(String...)}
+     */
+    public void warning(Message... messages) {
+        String[] strings = Arrays.stream(messages).map(message -> plugin.translation.get(message.getPath(), message.getDefault())).toArray(String[]::new);
+        warning(strings);
+    }
+
+    /**
      * @deprecated use {@link #warning(String...)}
      */
+    @Deprecated(forRemoval = true)
     public void Warning(String... messages) {
         warning(messages);
     }
@@ -117,8 +144,17 @@ public class Messenger {
     }
 
     /**
+     * A method that get message from {@link Message} provided and send it to {@link #info(String...)}
+     */
+    public void info(Message... messages) {
+        String[] strings = Arrays.stream(messages).map(message -> plugin.translation.get(message.getPath(), message.getDefault())).toArray(String[]::new);
+        info(strings);
+    }
+
+    /**
      * @deprecated use {@link #info(String...)}
      */
+    @Deprecated(forRemoval = true)
     public void Info(String... messages) {
         info(messages);
     }
@@ -131,10 +167,26 @@ public class Messenger {
     }
 
     /**
+     * A method that get message from {@link Message} provided and send it to {@link #send(CommandSender, String...)}
+     */
+    public void send(CommandSender sender, Message... messages) {
+        String[] strings = Arrays.stream(messages).map(message -> plugin.translation.get(message.getPath(), message.getDefault())).toArray(String[]::new);
+        send(sender, strings);
+    }
+
+    /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#Personal}.
      */
     public void response(CommandSender target, String... messages) {
         sendMessage(MessageMode.Personal, target, messages);
+    }
+
+    /**
+     * A method that get message from {@link Message} provided and send it to {@link #response(CommandSender, String...)}
+     */
+    public void response(CommandSender sender, Message... messages) {
+        String[] strings = Arrays.stream(messages).map(message -> plugin.translation.get(message.getPath(), message.getDefault())).toArray(String[]::new);
+        response(sender, strings);
     }
 
     /**
@@ -145,10 +197,26 @@ public class Messenger {
     }
 
     /**
+     * A method that get message from {@link Message} provided and send it to {@link #broadcast(boolean, String...)}
+     */
+    public void broadcast(boolean critical, Message... messages) {
+        String[] strings = Arrays.stream(messages).map(message -> plugin.translation.get(message.getPath(), message.getDefault())).toArray(String[]::new);
+        broadcast(critical, strings);
+    }
+
+    /**
      * A method as a shortcut for {@link #sendMessage(MessageMode, CommandSender, String...) sendMessage} for {@link MessageMode#BroadCast}
      */
     public void broadcast(String... messages) {
         sendMessage(MessageMode.BroadCast, Bukkit.getConsoleSender(), messages);
+    }
+
+    /**
+     * A method that get message from {@link Message} provided and send it to {@link #broadcast(String...)}
+     */
+    public void broadcast(Message... messages) {
+        String[] strings = Arrays.stream(messages).map(message -> plugin.translation.get(message.getPath(), message.getDefault())).toArray(String[]::new);
+        broadcast(strings);
     }
 
     /**
