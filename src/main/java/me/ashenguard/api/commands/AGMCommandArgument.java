@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class AGMCommandArgument {
+    private final boolean primitive;
     private final Class<?> cls;
     private final Object def;
 
@@ -25,7 +26,8 @@ public class AGMCommandArgument {
     }
 
     private AGMCommandArgument(Class<?> cls) {
-        this.cls = cls;
+        this.primitive = cls.isPrimitive();
+        this.cls = getClass(cls);
 
         this.caster = getCaster();
         this.recommender = getRecommender();
@@ -44,16 +46,29 @@ public class AGMCommandArgument {
         };
     }
 
+    private static Class<?> getClass(Class<?> cls) {
+        if (cls == byte.class) return Byte.class;
+        if (cls == short.class) return Short.class;
+        if (cls == int.class) return Integer.class;
+        if (cls == long.class) return Long.class;
+        if (cls == float.class) return Float.class;
+        if (cls == double.class) return Double.class;
+        if (cls == char.class) return Character.class;
+        if (cls == boolean.class) return Boolean.class;
+
+        return cls;
+    }
+
     private Function<String, List<String>> getRecommender() {
-        if (cls == byte.class || cls == Byte.class)
+        if (cls == Byte.class)
             return dynamicRecommender("01");
-        if (cls == short.class || cls == Short.class || cls == int.class || cls == Integer.class || cls == long.class || cls == Long.class)
+        if (cls == Short.class || cls == Integer.class || cls == Long.class)
             return dynamicRecommender(AGMConstants.NUMBERS);
-        if (cls == float.class || cls == Float.class || cls == double.class || cls == Double.class)
+        if (cls == Float.class || cls == Double.class)
             return dynamicRecommender(s -> s.contains("."), AGMConstants.NUMBERS, AGMConstants.NUMBERS + ".");
-        if (cls == boolean.class || cls == Boolean.class)
+        if (cls == Boolean.class)
             return s -> Arrays.asList("true", "false");
-        if (cls == char.class || cls == Character.class)
+        if (cls == Character.class)
             return s -> AGMConstants.LITERAL.chars().mapToObj(i -> String.valueOf((char) i)).toList();
 
         if (cls == Player.class) return s -> Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
@@ -132,11 +147,12 @@ public class AGMCommandArgument {
 
     public Object getDefault() {
         if (def != null) return def;
+        if (!primitive) return null;
 
-        if (cls == byte.class || cls == short.class || cls == int.class || cls == long.class) return cls.cast(0);
-        if (cls == float.class || cls == double.class) return cls.cast(0.0);
-        if (cls == char.class) return (char) 0;
-        if (cls == boolean.class) return false;
+        if (cls == Byte.class || cls == Short.class || cls == Integer.class || cls == Long.class) return cls.cast(0);
+        if (cls == Float.class || cls == Double.class) return cls.cast(0.0);
+        if (cls == Character.class) return (char) 0;
+        if (cls == Boolean.class) return false;
 
         return null;
     }
