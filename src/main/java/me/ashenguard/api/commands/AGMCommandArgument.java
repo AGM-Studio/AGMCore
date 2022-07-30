@@ -24,6 +24,7 @@ public class AGMCommandArgument {
 
     private final Function<String, Object> caster;
     private final Function<String, List<String>> recommender;
+    private Function<String, List<String>> definedRecommender = null;
 
 
     protected static AGMCommandArgument from(AGMCommand command, Class<?> cls, int arg) {
@@ -166,6 +167,10 @@ public class AGMCommandArgument {
         return null;
     }
 
+    public void setRecommender(Function<String, List<String>> recommender) {
+        this.definedRecommender = recommender;
+    }
+
     public Object cast(String arg) {
         if (arg == null) return getDefault();
         try {
@@ -177,6 +182,9 @@ public class AGMCommandArgument {
     }
 
     public List<String> recommend(String arg) {
+        try {
+            return definedRecommender.apply(arg);
+        } catch (Throwable ignored) {}
         return recommender.apply(arg);
     }
 }

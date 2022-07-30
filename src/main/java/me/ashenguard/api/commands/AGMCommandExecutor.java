@@ -12,7 +12,7 @@ class AGMCommandExecutor {
     private final int depth;
     private final AGMCommand command;
 
-    private BiConsumer<CommandSender, String[]> consumer;
+    private BiConsumer<CommandSender, String[]> consumer = null;
     private List<AGMCommandArgument> arguments = new ArrayList<>();
 
     protected final Map<String, AGMCommandExecutor> subcommands = new HashMap<>();
@@ -40,6 +40,7 @@ class AGMCommandExecutor {
 
     protected void setConsumer(Method method) {
         AGMCommandException.checkMethodAccess(command, method);
+        AGMCommandException.checkMethodCompatibleCommand(command, method);
 
         Class<?>[] types = method.getParameterTypes();
         Predicate<CommandSender> isPlayer = Player.class.isAssignableFrom(types[0]) ? sender -> sender instanceof Player : sender -> true;
@@ -66,7 +67,27 @@ class AGMCommandExecutor {
         };
     }
 
+    @SuppressWarnings("unchecked")
+    protected void setRecommender(int argument, Method method) {
+        AGMCommandException.checkMethodAccess(command, method);
+        AGMCommandException.checkMethodCompatibleRecommender(command, method);
+
+        arguments.get(argument).setRecommender(s -> {
+            try {
+                return (List<String>) method.invoke(this.command, s);
+            } catch (Throwable ignored1) {
+                try {
+                    return (List<String>) method.invoke(this.command);
+                } catch (Throwable ignored2) {
+                    // It will be ignored so no need to specify a message
+                    throw new AGMCommandException();
+                }
+            }
+        });
+    }
+
     public void execute(CommandSender sender, String[] args) {
+        if (consumer == null) return;
         consumer.accept(sender, args);
     }
 

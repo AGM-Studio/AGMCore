@@ -1,5 +1,6 @@
 package me.ashenguard.api.commands;
 
+import me.ashenguard.api.commands.annotations.AGMArgumentRecommender;
 import me.ashenguard.api.commands.annotations.AGMCommandHandler;
 import me.ashenguard.api.commands.annotations.AGMSubcommandHandler;
 import me.ashenguard.api.spigot.SpigotPlugin;
@@ -88,6 +89,22 @@ public abstract class AGMCommand implements TabCompleter, CommandExecutor {
                 }
 
                 executor.setConsumer(method);
+            }
+            if (method.isAnnotationPresent(AGMArgumentRecommender.class)) {
+                AGMArgumentRecommender annotation = method.getAnnotation(AGMArgumentRecommender.class);
+
+                if ("".equals(annotation.value())) this.executor.setRecommender(annotation.arg(), method);
+                else {
+                    String[] args = annotation.value().split(" ");
+
+                    AGMCommandExecutor executor = this.executor;
+                    for (int i = 0; i < args.length; i++) {
+                        executor.subcommands.putIfAbsent(args[i].toLowerCase(), new AGMCommandExecutor(this, i + 1));
+                        executor = executor.subcommands.get(args[i].toLowerCase());
+                    }
+
+                    executor.setRecommender(annotation.arg(), method);
+                }
             }
         }
     }
