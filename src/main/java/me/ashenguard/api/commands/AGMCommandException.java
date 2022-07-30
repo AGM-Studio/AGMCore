@@ -2,6 +2,7 @@ package me.ashenguard.api.commands;
 
 import me.ashenguard.agmcore.AGMCore;
 import me.ashenguard.api.spigot.SpigotPlugin;
+import me.ashenguard.api.utils.encoding.Ordinal;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,6 +19,10 @@ public class AGMCommandException extends RuntimeException {
     // Runtime exceptions
     public static AGMCommandException playerOnly(AGMCommand command) {
         String message = getMessage(command.plugin, "PlayerOnlyCommandError", "§cThis command can only be executed by a player.");
+        return new AGMCommandException(message, true);
+    }
+    public static AGMCommandException missingArgument(AGMCommand command, Class<?> type, int argument) {
+        String message = getMessage(command.plugin, "MissingArgumentError", "§cThis command requires an %s as %s argument.", type.getSimpleName(), Ordinal.to(argument));
         return new AGMCommandException(message, true);
     }
     public static AGMCommandException unexpectedError(AGMCommand command, Throwable cause) {

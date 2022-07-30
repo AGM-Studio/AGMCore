@@ -45,7 +45,7 @@ class AGMCommandExecutor {
         Predicate<CommandSender> isPlayer = Player.class.isAssignableFrom(types[0]) ? sender -> sender instanceof Player : sender -> true;
 
         arguments = new ArrayList<>();
-        for (int i = 1; i < types.length; i++) arguments.add(AGMCommandArgument.from(types[i]));
+        for (int i = 1; i < types.length; i++) arguments.add(AGMCommandArgument.from(command, types[i], i));
 
         this.consumer = (sender, args) -> {
             if (!isPlayer.test(sender)) throw AGMCommandException.playerOnly(command);

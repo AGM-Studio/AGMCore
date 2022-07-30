@@ -2,6 +2,7 @@ package me.ashenguard.api.commands;
 
 import me.ashenguard.AGMConstants;
 import me.ashenguard.api.commands.annotations.DefaultValue;
+import me.ashenguard.api.commands.annotations.RequiredValue;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -13,26 +14,33 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class AGMCommandArgument {
+    private final AGMCommand command;
+    private final int arg;
+
     private final boolean primitive;
     private final Class<?> cls;
     private final Object def;
+    private final boolean required;
 
     private final Function<String, Object> caster;
     private final Function<String, List<String>> recommender;
 
 
-    protected static AGMCommandArgument from(Class<?> cls) {
-        return new AGMCommandArgument(cls);
+    protected static AGMCommandArgument from(AGMCommand command, Class<?> cls, int arg) {
+        return new AGMCommandArgument(command, cls, arg);
     }
 
-    private AGMCommandArgument(Class<?> cls) {
+    private AGMCommandArgument(AGMCommand command, Class<?> cls, int arg) {
+        this.command = command;
         this.primitive = cls.isPrimitive();
         this.cls = getClass(cls);
+        this.arg = arg;
 
         this.caster = getCaster();
         this.recommender = getRecommender();
 
-        this.def = cls.isAnnotationPresent(DefaultValue.class) ? this.caster.apply(cls.getAnnotation(DefaultValue.class).value()) : null;
+        this.required = cls.isAnnotationPresent(RequiredValue.class);
+        this.def = cls.isAnnotationPresent(DefaultValue.class) && !required ? this.caster.apply(cls.getAnnotation(DefaultValue.class).value()) : null;
     }
 
     private static Function<String, List<String>> dynamicRecommender(final String from) {
@@ -146,6 +154,7 @@ public class AGMCommandArgument {
     }
 
     public Object getDefault() {
+        if (required) throw AGMCommandException.missingArgument(command, cls, arg);
         if (def != null) return def;
         if (!primitive) return null;
 
