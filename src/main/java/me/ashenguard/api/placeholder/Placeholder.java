@@ -1,6 +1,7 @@
 package me.ashenguard.api.placeholder;
 
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,11 @@ public class Placeholder {
                 string = string.replaceFirst(String.format("{%s}", bracket), value);
             }
         }
+        return string;
+    }
+
+    public static String apply(String string, Player player, Placeholder... placeholders) {
+        for (Placeholder placeholder: placeholders) string = placeholder.apply(string, player);
         return string;
     }
 }

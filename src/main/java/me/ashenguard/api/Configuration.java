@@ -1,5 +1,6 @@
 package me.ashenguard.api;
 
+import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.spigot.SpigotPlugin;
 import me.ashenguard.api.utils.FileUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -35,12 +36,20 @@ public class Configuration extends YamlConfiguration {
         this(plugin, path, plugin.getResource(resource), defaultEditor);
     }
 
+    public Configuration(SpigotPlugin plugin, String path, String resource, Placeholder... placeholders) {
+        this(plugin, path, plugin.getResource(resource), s -> Placeholder.apply(s, null, placeholders));
+    }
+
     public Configuration(SpigotPlugin plugin, String path, InputStream resource) {
         this(plugin, path, resource, (string -> string));
     }
 
     public Configuration(SpigotPlugin plugin, String path, InputStream resource, Function<String, String> defaultEditor) {
         this(plugin, path, FileUtils.readStream(resource), defaultEditor, 0);
+    }
+
+    public Configuration(SpigotPlugin plugin, String path, InputStream resource, Placeholder... placeholders) {
+        this(plugin, path, FileUtils.readStream(resource), s -> Placeholder.apply(s, null, placeholders), 0);
     }
 
     private Configuration(SpigotPlugin plugin, String path, String data, Function<String, String> defaultEditor, int ignored) {
