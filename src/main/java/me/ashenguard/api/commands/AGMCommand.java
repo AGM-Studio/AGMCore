@@ -28,6 +28,9 @@ public abstract class AGMCommand implements TabCompleter, CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        // Fix arguments
+        args = String.join(" ", args).split("\"?( |$)(?=(([^\"]*\"){2})*[^\"]*$)\"?");
+
         AGMCommandExecutor executor = getExecutor(args);
         try {
             if (executor != null) executor.execute(sender, Arrays.copyOfRange(args, executor.getDepth(), args.length));
