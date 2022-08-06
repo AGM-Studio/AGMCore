@@ -15,9 +15,16 @@ import static org.bukkit.Bukkit.getServer;
 
 @SuppressWarnings({"unused"})
 public class VaultAPI {
+    private static boolean setup = false;
     private static Permission permission = null;
     private static Economy economy = null;
     private static Chat chat = null;
+
+    public static class RSPNotInstalled extends RuntimeException {
+        protected RSPNotInstalled(String message) {
+            super(message);
+        }
+    }
 
     public static boolean isEconomyEnabled() {
         return economy != null;
@@ -30,6 +37,8 @@ public class VaultAPI {
     }
 
     public static void setup() {
+        if (setup) return;
+
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
             AGMCore.getMessenger().debug("Hook", "Unable to access §6Vault§r, Plugin not found!");
             return;
@@ -48,13 +57,21 @@ public class VaultAPI {
                 "Vault Permission: §6" + (isPermissionsEnabled()? "§aEnable": "§cDisable"),
                 "Vault Economy: §6" + (isEconomyEnabled()? "§aEnable": "§cDisable"),
                 "Vault Chat: §6" + (isChatEnabled()? "§aEnable": "§cDisable"));
+
+        setup = true;
     }
 
     public double getPlayerBalance(OfflinePlayer player) {
+        if (!setup) setup();
+        if (economy == null) throw new RSPNotInstalled("Economy is not activated");
+
         return economy.getBalance(player);
     }
 
-    public EconomyResponse withdrawPlayerMoney(OfflinePlayer player, double amount) {
+    public static EconomyResponse withdrawPlayerMoney(OfflinePlayer player, double amount) {
+        if (!setup) setup();
+        if (economy == null) throw new RSPNotInstalled("Economy is not activated");
+
         EconomyResponse response = economy.withdrawPlayer(player, amount);
         if (response.transactionSuccess())
             AGMCore.getMessenger().debug("Vault", String.format("§6%s§r's %.1f transaction (Withdraw) has been§a successful§r", player.getName(), amount));
@@ -62,7 +79,10 @@ public class VaultAPI {
             AGMCore.getMessenger().debug("Vault",String.format("§6%s§r's %.1f transaction (Withdraw) has been§c failed§r", player.getName(), amount));
         return response;
     }
-    public EconomyResponse depositPlayerMoney(OfflinePlayer player, double amount) {
+    public static EconomyResponse depositPlayerMoney(OfflinePlayer player, double amount) {
+        if (!setup) setup();
+        if (economy == null) throw new RSPNotInstalled("Economy is not activated");
+
         EconomyResponse response = economy.depositPlayer(player, amount);
         if (response.transactionSuccess())
             AGMCore.getMessenger().debug("Vault", String.format("§6%s§r's %.1f transaction (Deposit) has been§a successful§r", player.getName(), amount));
@@ -71,7 +91,10 @@ public class VaultAPI {
         return response;
     }
 
-    public boolean playerGroupExists(String group) {
+    public static boolean playerGroupExists(String group) {
+        if (!setup) setup();
+        if (economy == null) throw new RSPNotInstalled("Permissions are not activated");
+
         return Arrays.stream(permission.getGroups()).toList().contains(group.toLowerCase());
     }
 }
