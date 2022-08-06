@@ -6,6 +6,9 @@ import me.ashenguard.api.commands.annotations.RequiredValue;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -151,7 +154,21 @@ public class AGMCommandArgument {
             }
         };
 
-        return cls::cast;
+        if (cls == String.class) return s -> s;
+
+        try {
+            Method method = cls.getDeclaredMethod("cast", String.class);
+            AGMCommandException.checkMethodAccess(command, cls, method);
+            if (Modifier.isStatic(method.getModifiers())) return s -> {
+                try {
+                    return method.invoke(null, s);
+                } catch (IllegalAccessException | InvocationTargetException exception) {
+                    throw AGMCommandException.castingUnexpectedError(command, cls, s, exception);
+                }
+            };
+        } catch (NoSuchMethodException ignored) {}
+
+        throw AGMCommandException.noCastingAvailable(command, cls);
     }
 
     public Object getDefault() {

@@ -61,7 +61,7 @@ public class VaultAPI {
         setup = true;
     }
 
-    public double getPlayerBalance(OfflinePlayer player) {
+    public static double getPlayerBalance(OfflinePlayer player) {
         if (!setup) setup();
         if (economy == null) throw new RSPNotInstalled("Economy is not activated");
 

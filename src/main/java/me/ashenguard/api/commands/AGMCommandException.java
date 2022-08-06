@@ -31,6 +31,16 @@ public class AGMCommandException extends RuntimeException {
         String message = getMessage(command.plugin, "UnexpectedCommandError", "§cAn unexpected error happened while handling command \"§7/%s§c\"", command.name);
         return new AGMCommandException(message, cause, true);
     }
+    public static AGMCommandException castingUnexpectedError(AGMCommand command, Class<?> cls, String value, Throwable cause) {
+        String message = getMessage(command.plugin, "CastingUnexpectedError", "§cWhile trying to cast \"%s\" to \"%s\" an unexpected error occurred.", value, cls.getSimpleName());
+        return new AGMCommandException(message, cause, true);
+    }
+
+    // Invalid arguments
+    public static AGMCommandException noCastingAvailable(AGMCommand command, Class<?> cls) {
+        String message = getMessage(command.plugin, "NoCastingAvailable", "§cClass \"%s\" has no casting available.", cls.getSimpleName());
+        return new AGMCommandException(message);
+    }
 
     // Initial exceptions
     public static AGMCommandException inaccessibleMethodError(AGMCommand command, Method method) {
@@ -45,7 +55,10 @@ public class AGMCommandException extends RuntimeException {
 
     // Checks
     protected static void checkMethodAccess(AGMCommand command, Method method) {
-        if (!method.getDeclaringClass().isAssignableFrom(command.getClass()) || !method.canAccess(command))
+        checkMethodAccess(command, command.getClass(), method);
+    }
+    protected static void checkMethodAccess(AGMCommand command, Class<?> cls, Method method) {
+        if (!method.getDeclaringClass().isAssignableFrom(cls) || !method.canAccess(cls))
             throw inaccessibleMethodError(command, method);
     }
     protected static void checkMethodCompatibleRecommender(AGMCommand command, Method method) {
