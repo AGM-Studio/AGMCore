@@ -11,7 +11,7 @@ public abstract class AdvancedListener implements Listener {
     private boolean registered = false;
 
     protected SpigotPlugin plugin;
-    protected abstract void onRegister();
+    protected void onRegister() {}
 
     public void register(SpigotPlugin plugin) {
         if (registered) return;

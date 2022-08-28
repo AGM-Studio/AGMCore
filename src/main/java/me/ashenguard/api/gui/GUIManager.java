@@ -2,13 +2,14 @@ package me.ashenguard.api.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import me.ashenguard.agmcore.AGMCore;
+import me.ashenguard.api.AdvancedListener;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.versions.MCVersion;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -16,14 +17,93 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings({"UnusedReturnValue", "unused", "ConstantConditions"})
-public class GUIManager implements Listener {
+public class GUIManager extends AdvancedListener {
     public static final String PLAYER_HEAD = "Player_Head";
     public static final String CUSTOM_HEAD = "Custom_Head";
     public static final int RATE = AGMCore.getInstance().getConfig().getInt("GUIUpdate", 4);
 
-    private int tick = 0;
+    public static GUIManager instance = null;
+    public static GUIManager getInstance() {
+        if (instance == null) instance = new GUIManager();
+        return instance;
+    }
+    public static void setInstance(GUIManager instance) {
+        if (GUIManager.instance == null) GUIManager.instance = instance;
+    }
+
+    public static int getTick() {
+        return instance.getGUITick();
+    }
+
+    public static void updateAll() {
+        instance.updateAllInventories();
+    }
+    public static void update(GUIPlayerInventory inventory) {
+        instance.updateInventory(inventory);
+    }
+
+    public static void closeAll() {
+        instance.closeAllInventories();
+    }
+    public static void close(Player player) {
+        player.closeInventory();
+        instance.closeInventory(player);
+    }
+
+    public static GUIPlayerInventory open(GUIInventory gui, Player player) {
+        return instance.openInventory(gui, player);
+    }
+
+    private final AtomicInteger tick = new AtomicInteger(0);
+    private final Map<Player, GUIPlayerInventory> inventoryMap = new HashMap<>();
+    
+    public GUIManager() {
+        if (RATE > 0) Bukkit.getScheduler().runTaskTimer(AGMCore.getInstance(), () -> {
+            tick.getAndIncrement();
+            updateAllInventories();
+        }, RATE, RATE);
+    }
+
+    protected void updateAllInventories() {
+        inventoryMap.values().forEach(this::updateInventory);
+    }
+    protected void updateInventoryTitle(GUIPlayerInventory inventory) {
+        // Only possible with NMS
+    }
+    protected void updateInventorySlots(GUIPlayerInventory inventory) {
+        inventory.design();
+        inventory.getPlayer().updateInventory();
+    }
+    protected void updateInventory(GUIPlayerInventory inventory) {
+        updateInventorySlots(inventory);
+        updateInventoryTitle(inventory);
+    }
+
+    protected void closeAllInventories() {
+        inventoryMap.keySet().forEach(this::closeInventory);
+    }
+    protected void closeInventory(Player player) {
+        player.closeInventory();
+    }
+
+    protected GUIPlayerInventory openInventory(GUIInventory gui, Player player) {
+        GUIPlayerInventory previous = inventoryMap.remove(player);
+        if (previous != null) closeInventory(player);
+
+        GUIPlayerInventory inventory = new GUIPlayerInventory(gui, player);
+        inventoryMap.put(player, inventory);
+        inventory.open();
+
+        return inventory;
+    }
+
+    public int getGUITick() {
+        return tick.get();
+    }
 
     public static void translateLegacy(Configuration config, ConfigurationSection section) {
         if (section == null) return;
@@ -46,64 +126,25 @@ public class GUIManager implements Listener {
         config.saveConfig();
     }
 
-    public GUIManager() {
-        registerListeners();
-
-        if (RATE > 0)
-            AGMCore.getInstance().getServer().getScheduler().runTaskTimer(AGMCore.getInstance(), this::updateInventories, RATE, RATE);
-
-        AGMCore.getMessenger().debug("GUI", "§5GUIManager§r has been loaded.");
-    }
-
-    public void registerListeners() {
-        AGMCore.getInstance().getServer().getPluginManager().registerEvents(this, AGMCore.getInstance());
-    }
-
-    private void updateInventories() {
-        tick += 1;
-
-        for (GUIInventory inventory: inventoryHashMap.values()) GUIUpdater.update(inventory);
-    }
-
-    public int getTick() {
-        return tick;
-    }
-
-    // ---- GUI Inventories ---- //
-    private final HashMap<Player, GUIInventory> inventoryHashMap = new HashMap<>();
-    public GUIInventory getGUIInventory(Player player) {
-        return inventoryHashMap.getOrDefault(player, null);
-    }
-    public GUIInventory saveGUIInventory(Player player, GUIInventory inventory) {
-        return inventoryHashMap.put(player, inventory);
-    }
-    public GUIInventory removeGUIInventory(Player player) {
-        return inventoryHashMap.remove(player);
-    }
-    public void closeAll() {
-        for (GUIInventory guiInventory : inventoryHashMap.values()) guiInventory.close();
-    }
-
     @EventHandler
     public void onClick(@NotNull InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         Inventory inventory = event.getClickedInventory();
 
-        GUIInventory guiInventory = getGUIInventory(player);
-        if (guiInventory == null || (inventory == null || inventory.getType() == InventoryType.PLAYER)) return;
+        GUIPlayerInventory playerInventory = inventoryMap.get(player);
+        if (playerInventory == null || (inventory == null || inventory.getType() == InventoryType.PLAYER)) return;
 
         AGMCore.getMessenger().debug("GUI", "Inventory click detected", String.format("Player= §6%s", player.getName()), String.format("Slot= §6%d", event.getSlot()));
 
-        GUIInventorySlot slot = guiInventory.getSlot(event.getSlot());
-        if (slot == null || slot.runAction(event)) event.setCancelled(true);
+        if (playerInventory.trigger(event)) event.setCancelled(true);
     }
 
     @EventHandler
     public void onClose(@NotNull InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
 
-        GUIInventory guiInventory = removeGUIInventory(player);
-        if (guiInventory != null) guiInventory.close();
+        GUIPlayerInventory inventory = inventoryMap.remove(player);
+        if (inventory != null) close(player);
     }
 }
 

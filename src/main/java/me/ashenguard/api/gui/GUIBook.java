@@ -77,7 +77,7 @@ public class GUIBook {
         protected static Pattern HYPER_PATTERN = Pattern.compile("\\[(.+?)]\\((.+?)\\)");
 
         protected static Pattern COMMAND_PATTERN = Pattern.compile("^(.*?)\s?(/.+)$");
-        protected static Pattern LINK_PATTERN = Pattern.compile("^(https?://[^\\s]+)\s?(.*?)$");
+        protected static Pattern LINK_PATTERN = Pattern.compile("^(https?://\\S+)\s?(.*?)$");
 
         public final int start;
         public final int end;

@@ -24,7 +24,6 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public final class AGMCore extends SpigotPlugin {
     private static AGMCore instance;
-    private static GUIManager guiManager;
     private static ItemLibrary itemLibrary;
 
     public static AGMCore getInstance() {
@@ -32,9 +31,6 @@ public final class AGMCore extends SpigotPlugin {
     }
     public static Messenger getMessenger() {
         return instance.messenger;
-    }
-    public static GUIManager getGUIManager() {
-        return guiManager;
     }
     public static ItemLibrary getItemLibrary() {
         return itemLibrary;
@@ -62,7 +58,6 @@ public final class AGMCore extends SpigotPlugin {
     public void onPluginEnable() {
         instance = this;
 
-        guiManager = new GUIManager();
         itemLibrary = new ItemLibrary();
         if (PlaceholderManager.enable) new Placeholders().register();
         ExtensionLoader extensionLoader = new ExtensionLoader();
@@ -78,6 +73,8 @@ public final class AGMCore extends SpigotPlugin {
         MinecraftVersion.getVersion();
 
         Bukkit.getScheduler().runTaskLater(this, VaultAPI::setup, 10);
+
+        GUIManager.setInstance(new GUIManager());
     }
 
     @Override
@@ -85,7 +82,7 @@ public final class AGMCore extends SpigotPlugin {
         for (CoreExtension extension: extensions.values()) extension.onDisable();
         AGMEvents.deactivateDayCycleEvent(true);
 
-        getGUIManager().closeAll();
+        GUIManager.closeAll();
     }
 
     private static class Placeholders extends PlaceholderExtension {
