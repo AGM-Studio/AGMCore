@@ -15,12 +15,12 @@ public class GUIPlayerInventory {
 
     private final Map<Integer, GUIInventorySlot> slots;
 
-    public GUIPlayerInventory(GUIInventory gui, Player player) {
+    public GUIPlayerInventory(GUIInventory gui, Player player, Object... extras) {
         if (gui.isLoaded()) gui.load();
 
         this.parent = gui;
         this.player = player;
-        this.slots = gui.getSlotMapFor(player);
+        this.slots = gui.getSlotMapFor(player, extras);
 
         this.inventory = Bukkit.createInventory(player, getSize(), getTitle());
     }

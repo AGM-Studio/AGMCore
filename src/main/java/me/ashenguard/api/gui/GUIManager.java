@@ -87,6 +87,7 @@ public class GUIManager extends AdvancedListener {
         inventoryMap.keySet().forEach(this::closeInventory);
     }
     protected void closeInventory(Player player) {
+        inventoryMap.remove(player);
         player.closeInventory();
     }
 

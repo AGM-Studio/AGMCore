@@ -112,7 +112,7 @@ public abstract class GUIInventory {
         this.title = title;
     }
 
-    public Map<Integer, GUIInventorySlot> getSlotMapFor(Player player) {
+    public Map<Integer, GUIInventorySlot> getSlotMapFor(Player player, Object... extras) {
         return new HashMap<>(SLOT_MAP);
     }
 
