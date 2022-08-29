@@ -54,8 +54,8 @@ public class GUIManager extends AdvancedListener {
         instance.closeInventory(player);
     }
 
-    public static GUIPlayerInventory open(GUIInventory gui, Player player) {
-        return instance.openInventory(gui, player);
+    public static GUIPlayerInventory open(GUIInventory gui, Player player, Object... extras) {
+        return instance.openInventory(gui, player, extras);
     }
 
     private final AtomicInteger tick = new AtomicInteger(0);
