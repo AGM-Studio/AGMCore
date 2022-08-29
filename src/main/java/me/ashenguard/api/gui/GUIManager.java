@@ -91,11 +91,11 @@ public class GUIManager extends AdvancedListener {
         player.closeInventory();
     }
 
-    protected GUIPlayerInventory openInventory(GUIInventory gui, Player player) {
+    protected GUIPlayerInventory openInventory(GUIInventory gui, Player player, Object... extras) {
         GUIPlayerInventory previous = inventoryMap.remove(player);
         if (previous != null) closeInventory(player);
 
-        GUIPlayerInventory inventory = new GUIPlayerInventory(gui, player);
+        GUIPlayerInventory inventory = new GUIPlayerInventory(gui, player, extras);
         inventoryMap.put(player, inventory);
         inventory.open();
 
