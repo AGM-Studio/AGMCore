@@ -55,10 +55,10 @@ public class AGMCommandException extends RuntimeException {
 
     // Checks
     protected static void checkMethodAccess(AGMCommand command, Method method) {
-        checkMethodAccess(command, command.getClass(), method);
+        checkMethodAccess(command, command, method);
     }
-    protected static void checkMethodAccess(AGMCommand command, Class<?> cls, Method method) {
-        if (!method.getDeclaringClass().isAssignableFrom(cls) || !method.canAccess(cls))
+    protected static void checkMethodAccess(AGMCommand command, Object obj, Method method) {
+        if (!method.getDeclaringClass().isAssignableFrom(obj.getClass()) || !method.canAccess(obj))
             throw inaccessibleMethodError(command, method);
     }
     protected static void checkMethodCompatibleRecommender(AGMCommand command, Method method) {
