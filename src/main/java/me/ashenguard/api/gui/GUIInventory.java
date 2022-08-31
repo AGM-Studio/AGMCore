@@ -119,4 +119,8 @@ public abstract class GUIInventory {
     public boolean isLoaded() {
         return loaded;
     }
+
+    public GUIPlayerInventory getGUIPlayerInventory(Player player, Object... extras) {
+        return new GUIPlayerInventory(this, player, extras);
+    }
 }

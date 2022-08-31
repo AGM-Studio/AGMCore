@@ -95,7 +95,7 @@ public class GUIManager extends AdvancedListener {
         GUIPlayerInventory previous = inventoryMap.remove(player);
         if (previous != null) closeInventory(player);
 
-        GUIPlayerInventory inventory = new GUIPlayerInventory(gui, player, extras);
+        GUIPlayerInventory inventory = gui.getGUIPlayerInventory(player, extras);
         inventoryMap.put(player, inventory);
         inventory.open();
 
