@@ -115,7 +115,13 @@ public class GUIInventorySlot {
                 return true;
             };
         }
-        static Action fromConsumer(BiConsumer<InventoryClickEvent, Boolean> consumer) {
+        static Action fromConsumer(BiConsumer<GUIPlayerInventory, InventoryClickEvent> consumer) {
+            return (i, e, a) -> {
+                consumer.accept(i, e);
+                return true;
+            };
+        }
+        static Action fromConsumerAlt(BiConsumer<InventoryClickEvent, Boolean> consumer) {
             return (i, e, a) -> {
                 consumer.accept(e, a);
                 return true;
