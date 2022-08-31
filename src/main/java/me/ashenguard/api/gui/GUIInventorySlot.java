@@ -2,6 +2,8 @@ package me.ashenguard.api.gui;
 
 import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.utils.Pair;
+import me.ashenguard.utils.TriConsumer;
+import me.ashenguard.utils.TriFunction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +17,7 @@ public class GUIInventorySlot {
     protected final String key;
     protected final Integer slot;
 
-    protected Action action = (e, a) -> true;
+    protected Action action = (i, e, a) -> true;
     protected Check check = () -> false;
 
     protected final List<PlaceholderItemStack> items = new ArrayList<>();
@@ -93,23 +95,35 @@ public class GUIInventorySlot {
     public void setAltCheck(@NotNull Check check) {
         this.check = check;
     }
-    public boolean runAction(InventoryClickEvent event) {
-        return this.action.apply(event, check != null && check.get());
+    public boolean runAction(GUIPlayerInventory inventory, InventoryClickEvent event) {
+        return this.action.apply(inventory, event, check != null && check.get());
     }
 
-    public interface Action extends BiFunction<InventoryClickEvent, Boolean, Boolean> {
+    public interface Action extends TriFunction<GUIPlayerInventory, InventoryClickEvent, Boolean, Boolean> {
         static Action fromFunction(Function<InventoryClickEvent, Boolean> function) {
-            return (e, a) -> function.apply(e);
+            return (i, e, a) -> function.apply(e);
+        }
+        static Action fromBiFunction(BiFunction<GUIPlayerInventory, InventoryClickEvent, Boolean> function) {
+            return (i, e, a) -> function.apply(i, e);
+        }
+        static Action fromBiFunctionAlt(BiFunction<InventoryClickEvent, Boolean, Boolean> function) {
+            return (i, e, a) -> function.apply(e, a);
+        }
+        static Action fromConsumer(Consumer<InventoryClickEvent> consumer) {
+            return (i, e, a) -> {
+                consumer.accept(e);
+                return true;
+            };
         }
         static Action fromConsumer(BiConsumer<InventoryClickEvent, Boolean> consumer) {
-            return (e, a) -> {
+            return (i, e, a) -> {
                 consumer.accept(e, a);
                 return true;
             };
         }
-        static Action fromConsumer(Consumer<InventoryClickEvent> consumer) {
-            return (e, a) -> {
-                consumer.accept(e);
+        static Action fromConsumer(TriConsumer<GUIPlayerInventory, InventoryClickEvent, Boolean> consumer) {
+            return (i, e, a) -> {
+                consumer.accept(i, e, a);
                 return true;
             };
         }
