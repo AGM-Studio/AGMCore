@@ -49,7 +49,7 @@ public class GUIPlayerInventory {
 
     public boolean trigger(InventoryClickEvent event) {
         GUIInventorySlot slot = slots.get(event.getSlot());
-        return slot == null || slot.runAction(event);
+        return slot == null || slot.runAction(this, event);
     }
 
     public Player getPlayer() {
