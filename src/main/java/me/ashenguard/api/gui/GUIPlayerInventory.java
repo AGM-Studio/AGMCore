@@ -49,7 +49,7 @@ public class GUIPlayerInventory {
             GUIInventorySlot slot = slots.get(i);
             if (slot == null) continue;
 
-            this.inventory.setItem(i, slot.getItem().getItem(player, parent.placeholders));
+            this.inventory.setItem(i, slot.getItem().getItem(player, placeholders));
         }
     }
 
