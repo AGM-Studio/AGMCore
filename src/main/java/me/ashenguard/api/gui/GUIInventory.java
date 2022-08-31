@@ -32,7 +32,7 @@ public abstract class GUIInventory {
     protected Map<String, PlaceholderItemStack> ITEM_MAP = new HashMap<>();
     protected Map<Integer, GUIInventorySlot> SLOT_MAP = new HashMap<>();
 
-    protected Set<Placeholder> placeholders = new HashSet<>();
+    protected final Set<Placeholder> placeholders = new HashSet<>();
 
     private @NotNull Pair<PlaceholderItemStack, Integer> getItem(String key) {
         Matcher MIM = MULTI_ITEM_PATTERN.matcher(key);
