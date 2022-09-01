@@ -16,8 +16,7 @@ public class GUIPlayerInventory {
     private final Player player;
     private final Inventory inventory;
 
-    private final Map<Integer, GUIInventorySlot> slots;
-
+    protected final Map<Integer, GUIInventorySlot> slots;
     protected final Set<Placeholder> placeholders = new HashSet<>();
 
     public GUIPlayerInventory(GUIInventory gui, Player player, Object... extras) {
@@ -49,7 +48,7 @@ public class GUIPlayerInventory {
             GUIInventorySlot slot = slots.get(i);
             if (slot == null) continue;
 
-            this.inventory.setItem(i, slot.getItem().getItem(player, placeholders));
+            this.inventory.setItem(i, slot.getItem(this).getItem(player, placeholders));
         }
     }
 

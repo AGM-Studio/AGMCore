@@ -67,7 +67,7 @@ public abstract class GUIInventory {
         for (String key : section.getKeys(false)) {
             List<String> slots = section.getStringList(String.format("%s.Slots", key));
             List<String> itemList = section.getStringList(String.format("%s.Items", key));
-            List<String> altList = section.getStringList(String.format("%s.Items", key));
+            List<String> altList = section.getStringList(String.format("%s.AltItems", key));
 
             for (String slot : slots) {
                 Pair<Integer, Integer> sop = getSlotAndOffset(slot);

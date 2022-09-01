@@ -18,7 +18,7 @@ public class GUIInventorySlot {
     protected final Integer slot;
 
     protected Action action = (i, e, a) -> true;
-    protected Check check = () -> false;
+    protected Check check = i -> false;
 
     protected final List<PlaceholderItemStack> items = new ArrayList<>();
     protected final List<PlaceholderItemStack> alts = new ArrayList<>();
@@ -84,8 +84,8 @@ public class GUIInventorySlot {
         return this;
     }
 
-    public PlaceholderItemStack getItem() {
-        List<PlaceholderItemStack> list = check != null && check.get() ? alts : items;
+    public PlaceholderItemStack getItem(GUIPlayerInventory inventory) {
+        List<PlaceholderItemStack> list = check != null && check.apply(inventory) ? alts : items;
         return list.get(GUIManager.getTick() % list.size());
     }
 
@@ -96,7 +96,7 @@ public class GUIInventorySlot {
         this.check = check;
     }
     public boolean runAction(GUIPlayerInventory inventory, InventoryClickEvent event) {
-        return this.action.apply(inventory, event, check != null && check.get());
+        return this.action.apply(inventory, event, check != null && check.apply(inventory));
     }
 
     public interface Action extends TriFunction<GUIPlayerInventory, InventoryClickEvent, Boolean, Boolean> {
@@ -134,5 +134,9 @@ public class GUIInventorySlot {
             };
         }
     }
-    public interface Check extends Supplier<Boolean> {}
+    public interface Check extends Function<GUIPlayerInventory, Boolean> {
+        static Check fromSupplier(Supplier<Boolean> supplier) {
+            return i -> supplier.get();
+        }
+    }
 }
