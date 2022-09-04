@@ -47,11 +47,13 @@ public class Placeholder {
     }
 
     public String apply(String string, OfflinePlayer player) {
+        if (value == null) return string;
+
         List<String> placeholders = new ArrayList<>();
-        Matcher matcher = Pattern.compile("%([A-Z0-9a-z_]+?)%").matcher(string);
+        Matcher matcher = Pattern.compile("%(\\w+?)%").matcher(string);
         while (matcher.find()) placeholders.add(matcher.group(1));
         List<String> brackets = new ArrayList<>();
-        Matcher bracketMatcher = Pattern.compile("\\{([A-Z0-9a-z_]+?)}").matcher(string);
+        Matcher bracketMatcher = Pattern.compile("\\{(\\w+?)}").matcher(string);
         while (bracketMatcher.find()) brackets.add(bracketMatcher.group(1));
 
         for(String placeholder: placeholders) {
