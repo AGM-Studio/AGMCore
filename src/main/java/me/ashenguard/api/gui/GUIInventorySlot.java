@@ -16,6 +16,7 @@ import java.util.function.*;
 public class GUIInventorySlot {
     protected final String key;
     protected final Integer slot;
+    private int offset = 0;
 
     protected Action action = (i, e, a) -> true;
     protected Check check = i -> false;
@@ -79,14 +80,13 @@ public class GUIInventorySlot {
     }
 
     public GUIInventorySlot withOffset(int offset) {
-        offset = Math.min(this.items.size(), offset);
-        Collections.rotate(items, offset);
+        this.offset = offset;
         return this;
     }
 
     public PlaceholderItemStack getItem(GUIPlayerInventory inventory) {
         List<PlaceholderItemStack> list = check != null && check.apply(inventory) ? alts : items;
-        return list.get(GUIManager.getTick() % list.size());
+        return list.get((GUIManager.getTick() + offset) % list.size());
     }
 
     public void setAction(@NotNull Action action) {
