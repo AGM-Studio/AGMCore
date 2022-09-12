@@ -73,8 +73,7 @@ public final class AGMCore extends SpigotPlugin {
         MinecraftVersion.getVersion();
 
         Bukkit.getScheduler().runTaskLater(this, VaultAPI::setup, 10);
-
-        GUIManager.setInstance(new GUIManager());
+        Bukkit.getPluginManager().registerEvents(GUIManager.getInstance(), this);
     }
 
     @Override
