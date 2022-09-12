@@ -37,7 +37,7 @@ public abstract class GUIInventory {
     private @NotNull Pair<PlaceholderItemStack, Integer> getItem(String key) {
         Matcher MIM = MULTI_ITEM_PATTERN.matcher(key);
         boolean MIMFound = MIM.find();
-        if (MIM.find()) key = MIM.group(2);
+        if (MIMFound) key = MIM.group(2);
 
         String local = key.toLowerCase().startsWith("inventory:") ? key.substring(10) : key;
         PlaceholderItemStack item = ITEM_MAP.getOrDefault(local.toLowerCase(), null);
@@ -96,11 +96,11 @@ public abstract class GUIInventory {
     protected void load() {
         try {
             ReflectedField<Configuration> field = new ReflectedField<>(Configuration.class, this.getClass(), "config");
-            Configuration config = field.getSafeValue(this).get();
-            if (config != null) {
-                loadItems(config.getConfigurationSection("Items"));
-                loadSlots(config.getConfigurationSection("Slots"));
-            }
+            if (!field.isPublic()) field.setAccessible();
+            
+            Configuration config = field.getValue(this);
+            loadItems(config.getConfigurationSection("Items"));
+            loadSlots(config.getConfigurationSection("Slots"));
         } catch (Throwable ignored) {}
         loaded = true;
     }

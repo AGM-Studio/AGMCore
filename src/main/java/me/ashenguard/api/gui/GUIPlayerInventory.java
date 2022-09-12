@@ -20,7 +20,7 @@ public class GUIPlayerInventory {
     protected final Set<Placeholder> placeholders = new HashSet<>();
 
     public GUIPlayerInventory(GUIInventory gui, Player player, Object... extras) {
-        if (gui.isLoaded()) gui.load();
+        if (!gui.isLoaded()) gui.load();
 
         this.parent = gui;
         this.player = player;
@@ -35,7 +35,7 @@ public class GUIPlayerInventory {
     }
 
     public int getSize() {
-        return inventory.getSize();
+        return parent.size * 9;
     }
 
     public void open() {
@@ -44,11 +44,9 @@ public class GUIPlayerInventory {
     }
 
     public void design() {
-        for (int i = 0; i < parent.size * 9; i++) {
+        for (int i = 0; i < getSize(); i++) {
             GUIInventorySlot slot = slots.get(i);
-            if (slot == null) continue;
-
-            this.inventory.setItem(i, slot.getItem(this).getItem(player, placeholders));
+            this.inventory.setItem(i, slot == null ? null : slot.getItem(this).getItem(player, placeholders));
         }
     }
 
