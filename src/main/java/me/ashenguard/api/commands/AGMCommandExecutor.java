@@ -3,6 +3,7 @@ package me.ashenguard.api.commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -60,8 +61,13 @@ class AGMCommandExecutor {
             try {
                 values.add(0, sender);
                 method.invoke(this.command, values.toArray());
+            } catch (InvocationTargetException exception) {
+                Throwable cause = exception.getCause();
+                if (cause instanceof AGMCommandException) throw (AGMCommandException) cause;
+                this.command.plugin.messenger.handleException(cause);
+                throw AGMCommandException.unexpectedError(command, cause);
             } catch (Throwable throwable) {
-                this.command.plugin.messenger.response(sender, "Something went wrong while executing your command. If the issue happened again please inform an administrator");
+                this.command.plugin.messenger.handleException(throwable);
                 throw AGMCommandException.unexpectedError(command, throwable);
             }
         };

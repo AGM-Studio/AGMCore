@@ -29,7 +29,7 @@ public class AGMCommandException extends RuntimeException {
     }
     public static AGMCommandException unexpectedError(AGMCommand command, Throwable cause) {
         String message = getMessage(command.plugin, "UnexpectedCommandError", "§cAn unexpected error happened while handling command \"§7/%s§c\"", command.name);
-        return new AGMCommandException(message, cause, true);
+        return new AGMCommandException(message, cause, false);
     }
     public static AGMCommandException castingUnexpectedError(AGMCommand command, Class<?> cls, String value, Throwable cause) {
         String message = getMessage(command.plugin, "CastingUnexpectedError", "§cWhile trying to cast \"%s\" to \"%s\" an unexpected error occurred.", value, cls.getSimpleName());
